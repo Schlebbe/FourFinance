@@ -1,4 +1,5 @@
 ﻿using FourFinance.Users;
+using Spectre.Console;
 
 namespace FourFinance.Helpers
 {
@@ -30,6 +31,11 @@ namespace FourFinance.Helpers
         {
             _lastAccountNumber++;
             return _lastAccountNumber;
+        }
+
+        public static IUser GetUserByLogin(string username, string password)
+        {
+            return Users.FirstOrDefault(u => (u.UserName == username || u.Email == username) && u.Password == password);
         }
     }
 }
