@@ -9,5 +9,7 @@
         public string Password { get; set; }
         public string UserName { get; set; }
         //TODO: add list of accounts
+
+        //TODO: add create account method
     }
 }

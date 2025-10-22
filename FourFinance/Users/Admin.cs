@@ -1,4 +1,6 @@
-﻿namespace FourFinance.Users
+﻿using FourFinance.Helpers;
+
+namespace FourFinance.Users
 {
     public class Admin : IUser
     {
@@ -23,6 +25,9 @@
         public void AddCustomer()
         {
             //TODO: Add customer to management system list
+            //var age = Console.ReadLine();
+            //var customer = new Customer();
+            //BankHelper.AddUser(customer);
         }
     }
 }
