@@ -27,7 +27,7 @@ namespace FourFinance.Helpers
         public static void Login()
         {
             var username = AnsiConsole.Prompt(
-                    new TextPrompt<string>("Enter [green]Username/Email[/]:"));
+                new TextPrompt<string>("Enter [green]Username/Email[/]:"));
             var password = AnsiConsole.Prompt(
                 new TextPrompt<string>("Enter [red]Password[/]:")
                 .Secret());
@@ -38,6 +38,7 @@ namespace FourFinance.Helpers
             {
                 AnsiConsole.WriteLine("Invalid username/email or password. Please try again.");
                 Login(); // Retry login
+                return;
             }
 
             AnsiConsole.WriteLine($"Welcome back, {user.Name}!");

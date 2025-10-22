@@ -34,7 +34,7 @@ namespace FourFinance.Helpers
 
         public static IUser GetUserByLogin(string username, string password)
         {
-            return Users.FirstOrDefault(u => (u.UserName == username || u.Email == username) && u.Password == password);
+            return Users.FirstOrDefault(u => (u.UserName.ToLower() == username.ToLower() || u.Email.ToLower() == username.ToLower()) && u.Password == password);
         }
     }
 }
