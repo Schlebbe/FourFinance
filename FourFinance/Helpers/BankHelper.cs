@@ -1,5 +1,4 @@
 ﻿using FourFinance.Users;
-using Spectre.Console;
 
 namespace FourFinance.Helpers
 {
