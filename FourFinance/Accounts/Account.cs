@@ -1,4 +1,4 @@
-﻿namespace FourFinance.Account
+﻿namespace FourFinance.Accounts
 {
     public class Account
     {
