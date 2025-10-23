@@ -5,7 +5,7 @@
         public Guid Id { get; set; }
         public int AccountNumber { get; set; }
         private decimal _balance;
-        //private Currency _currency;
+        private Currency _currency;
         //public List<Loan> Loans { get; set; }
         //public List<Log> Logs { get; set; }
 
