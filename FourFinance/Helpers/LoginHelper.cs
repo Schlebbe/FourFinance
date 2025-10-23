@@ -90,8 +90,6 @@ namespace FourFinance.Helpers
             {
                 AnsiConsole.MarkupLine(line);
             }
-
-            //AnsiConsole.WriteLine("");
         }
     }
 }
