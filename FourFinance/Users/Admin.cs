@@ -1,4 +1,5 @@
 ﻿using FourFinance.Helpers;
+using System.Transactions;
 
 namespace FourFinance.Users
 {
@@ -24,9 +25,51 @@ namespace FourFinance.Users
         public void AddCustomer()
         {
             //TODO: Add customer to management system list
-            //var age = Console.ReadLine();
-            //var customer = new Customer();
-            //BankHelper.AddUser(customer);
+            Console.WriteLine("Enter age of the customer:");
+            var userInput = Console.ReadLine();
+
+            if (string.IsNullOrEmpty(userInput) || !int.TryParse(userInput, out var age))
+            {
+                Console.WriteLine("Invalid age. Please enter a number.");
+                return;
+            }
+           
+            Console.WriteLine("Enter name of the customer:");
+            var name = Console.ReadLine();
+
+            if (string.IsNullOrEmpty(name)) 
+            {
+                Console.WriteLine("You need to write a name.");
+                return; 
+            }
+           
+            Console.WriteLine("Enter email to the customer:");
+            var email = Console.ReadLine();
+
+            if (string.IsNullOrEmpty(email)) 
+            {
+                Console.WriteLine("You need to write a email.");
+                return; 
+            }
+
+            Console.WriteLine("Enter a password:");
+            var password = Console.ReadLine();
+            if (string.IsNullOrEmpty(password)) 
+            {
+                Console.WriteLine("You need to write a password.");
+                return; 
+            }
+
+            Console.WriteLine("Enter a username:");
+            var userName = Console.ReadLine();
+            if (string.IsNullOrEmpty(userName)) 
+            {
+                Console.WriteLine("You need to write a username.");
+                return;
+            }
+
+            var customer = new Customer(age, name, email, password, userName);
+            BankHelper.AddUser(customer);
         }
     }
 }
