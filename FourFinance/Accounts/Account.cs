@@ -9,10 +9,11 @@
         //public List<Loan> Loans { get; set; }
         //public List<Log> Logs { get; set; }
 
-        public Account(int accountNumber)
+        public Account(int accountNumber, Currency currency)
         {
             Id = Guid.NewGuid();
             AccountNumber = accountNumber;
+            _currency = currency;
         }
 
         public void Withdraw(decimal amount)
