@@ -11,9 +11,8 @@ namespace FourFinance.Users
         public string Password { get; set; }
         public string UserName { get; set; }
 
-        public Admin(Guid id, int age, string name, string email, string password, string userName)
+        public Admin(int age, string name, string email, string password, string userName)
         {
-            Id = id;
             Age = age;
             Name = name;
             Email = email;
