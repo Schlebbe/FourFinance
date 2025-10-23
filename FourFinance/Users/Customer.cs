@@ -1,4 +1,5 @@
-﻿namespace FourFinance.Users
+﻿using FourFinance.Accounts;
+namespace FourFinance.Users
 {
     public class Customer : IUser
     {
@@ -8,6 +9,8 @@
         public string Email { get; set; }
         public string Password { get; set; }
         public string UserName { get; set; }
+        
+        public List<Account> Accounts { get; set; } = new List<Account>();
 
         public Customer(int age, string name, string email, string password, string userName)
         {

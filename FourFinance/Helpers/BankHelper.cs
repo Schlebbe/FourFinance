@@ -1,4 +1,5 @@
-﻿using FourFinance.Users;
+﻿using FourFinance.Accounts;
+using FourFinance.Users;
 
 namespace FourFinance.Helpers
 {
@@ -20,10 +21,32 @@ namespace FourFinance.Helpers
             }
         }
 
-        public static int GetAccount(int accountNumber)
+        public static IUser? GetUserById(Guid id)
         {
-            //TODO: implement account retrieval
-            throw new NotImplementedException();
+            return Users.FirstOrDefault(u => u.Id == id);
+        }
+        
+        public static void GetAccounts(Guid userId)
+        {
+            var user = Users.OfType<Customer>().FirstOrDefault(u => u.Id == userId);
+
+            if (user == null)
+            {
+                Console.WriteLine($"No user found with ID {userId}");
+                return;
+            }
+
+            if (user.Accounts.Count == 0)
+            {
+                Console.WriteLine($"{user.Name} has no accounts.");
+                return;
+            }
+
+            Console.WriteLine($"Accounts for {user.Name}:");
+            foreach (var account in user.Accounts)
+            {
+                Console.WriteLine($" - Account Number: {account.AccountNumber}, Balance: {account.GetBalance()}");
+            }
         }
 
         public static int GenerateAccountNumber()
