@@ -1,4 +1,5 @@
-﻿using Spectre.Console;
+﻿using FourFinance.Users;
+using Spectre.Console;
 
 namespace FourFinance.Helpers
 {
@@ -39,12 +40,24 @@ namespace FourFinance.Helpers
 
             if (user == null)
             {
-                AnsiConsole.Markup("Invalid username/email or password. Please try again.");
+                AnsiConsole.MarkupLine("Invalid username/email or password. Please try again.");
                 Login(); // Retry login
                 return;
             }
-
-            AnsiConsole.Markup($"Welcome back, [blue]{user.Name}[/]!");
+            else if (user.GetType() == typeof(Admin))
+            {
+                AnsiConsole.Clear();
+                AnsiConsole.MarkupLine($"Welcome back, Admin [blue]{user.Name}[/]!");
+                MenuHelper.AdminMenu((Admin)user);
+                return;
+            }
+            else if (user.GetType() == typeof(Customer))
+            {
+                AnsiConsole.Clear();
+                AnsiConsole.MarkupLine($"Welcome back, [blue]{user.Name}[/]!");
+                MenuHelper.CustomerMenu((Customer)user);
+                return;
+            }
         }
 
         private static void PrintAsciiWelcome()
