@@ -40,7 +40,7 @@ namespace FourFinance.Helpers
 
             if (user == null)
             {
-                AnsiConsole.MarkupLine("Invalid username/email or password. Please try again.");
+                AnsiConsole.MarkupLine("[red]Invalid[/] username/email [yellow]or[/] password. Please try again.");
                 Login(); // Retry login
                 return;
             }
