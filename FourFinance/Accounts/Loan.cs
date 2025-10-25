@@ -20,13 +20,12 @@ public class Loan
     public void CreateLoan(decimal principal, decimal interest, decimal loanAmount, Account accountNumber)
     {
         //TODO: add a way to create a loan
+        decimal.TryParse(Console.ReadLine(), out principal);
     }
 
     public decimal CalculateInterest(decimal principal, decimal interest)
     {
-        decimal loanAmount = principal * (1 + interest);
-        Console.WriteLine($"Principal: {principal}\nInterest: {interest}\nLoan amount: {loanAmount}");
-        BankHelper.GetUserById(AccountNumber.Id);
+        decimal loanAmount = principal * interest;
         return loanAmount;
     }
 }
