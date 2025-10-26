@@ -54,5 +54,10 @@ namespace FourFinance.Helpers
             _lastAccountNumber++;
             return _lastAccountNumber;
         }
+
+        public static IUser GetUserByLogin(string username, string password)
+        {
+            return Users.FirstOrDefault(u => (u.UserName.ToLower() == username.ToLower() || u.Email.ToLower() == username.ToLower()) && u.Password == password);
+        }
     }
 }
