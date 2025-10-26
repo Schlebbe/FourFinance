@@ -26,7 +26,7 @@ namespace FourFinance.Helpers
             return Users.FirstOrDefault(u => u.Id == id);
         }
         
-        public static List<Account> GetAccounts(Guid userId)
+        public static List<Account>? GetAccounts(Guid userId)
         {
             var user = Users.OfType<Customer>().FirstOrDefault(u => u.Id == userId);
 
@@ -39,7 +39,7 @@ namespace FourFinance.Helpers
             if (user.Accounts.Count == 0)
             {
                 Console.WriteLine($"{user.Name} has no accounts.");
-                return new List<Account>();
+                return null;
             }
             return user.Accounts;
         }
