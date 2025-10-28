@@ -1,4 +1,5 @@
-﻿using FourFinance.Users;
+﻿using FourFinance.Accounts;
+using FourFinance.Users;
 using Spectre.Console;
 
 namespace FourFinance.Helpers
@@ -20,9 +21,7 @@ namespace FourFinance.Helpers
             switch (choice)
             {
                 case "List accounts":
-                    //BankHelper.GetAccounts(customer.Id); //TODO: Add account listing
-                    //TODO: After listing accounts, allow user to select an account to manage
-                    //New method? AccountMenu(accounts, customer);?
+                    ListAccounts(customer);
                     break;
                 case "Open new account":
                     OpenNewAccountMenu(customer);
@@ -33,6 +32,32 @@ namespace FourFinance.Helpers
                     Environment.Exit(0);
                     break;
             }
+        }
+
+        private static void ListAccounts(Customer customer)
+        {
+            var accounts = BankHelper.GetAccounts(customer.Id);
+            if (accounts == null || accounts.Count == 0)
+            {
+                AnsiConsole.Clear();
+                AnsiConsole.MarkupLine("[yellow]You have no accounts. Please open a new account first.[/]");
+                CustomerMenu(customer);
+                return;
+            }
+
+            var selectedAccount = AnsiConsole.Prompt(
+                new SelectionPrompt<Account>()
+                    .PageSize(5)
+                    .UseConverter(a => $"Account number: {a.AccountNumber}\n  Balance: {a.GetBalance()} {a.GetCurrency()}\n")
+                    .AddChoices(accounts));
+
+            if (selectedAccount != null)
+            {
+                AnsiConsole.Clear();
+                //TODO: Add AccountMenu method to manage selected account
+            }
+
+            return;
         }
 
         private static void OpenNewAccountMenu(Customer customer)

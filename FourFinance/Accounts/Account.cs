@@ -85,5 +85,10 @@ namespace FourFinance.Accounts
         {
             return _balance;
         }
+
+        public Currency GetCurrency()
+        {
+            return _currency;
+        }
     }
 }

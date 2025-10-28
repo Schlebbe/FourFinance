@@ -32,13 +32,13 @@ namespace FourFinance.Helpers
 
             if (user == null)
             {
-                Console.WriteLine($"No user found with ID {userId}");
+                //Console.WriteLine($"No user found with ID {userId}");
                 return null;
             }
 
             if (user.Accounts.Count == 0)
             {
-                Console.WriteLine($"{user.Name} has no accounts.");
+                //Console.WriteLine($"{user.Name} has no accounts.");
                 return null;
             }
             return user.Accounts;
