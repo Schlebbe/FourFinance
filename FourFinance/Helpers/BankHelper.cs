@@ -26,27 +26,22 @@ namespace FourFinance.Helpers
             return Users.FirstOrDefault(u => u.Id == id);
         }
 
-        public static void PrintAccounts(Guid userId)
+        public static List<Account>? GetAccounts(Guid userId)
         {
             var user = Users.OfType<Customer>().FirstOrDefault(u => u.Id == userId);
 
             if (user == null)
             {
                 Console.WriteLine($"No user found with ID {userId}");
-                return;
+                return null;
             }
 
             if (user.Accounts.Count == 0)
             {
                 Console.WriteLine($"{user.Name} has no accounts.");
-                return;
+                return null;
             }
-
-            Console.WriteLine($"Accounts for {user.Name}:");
-            foreach (var account in user.Accounts)
-            {
-                Console.WriteLine($" - Account Number: {account.AccountNumber}, Balance: {account.GetBalance()}");
-            }
+            return user.Accounts;
         }
 
         public static int GenerateAccountNumber()
