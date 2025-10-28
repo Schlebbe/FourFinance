@@ -45,7 +45,7 @@ namespace FourFinance.Accounts
             //TODO: Log transaction
         }
 
-        public void Transfer(decimal amount, int AccountNumber)
+        public void Transfer(decimal amount, int accountNumber)
         {
             var targetAccount = BankHelper.GetAccountByNumber(AccountNumber);
 
@@ -62,7 +62,7 @@ namespace FourFinance.Accounts
             //TODO: Log transaction
         }
 
-        public void Transfer(decimal amount, int AccountNumber, Customer currentUser)
+        public void Transfer(decimal amount, int accountNumber, Customer currentUser)
         {
             var targetAccount = currentUser.Accounts.FirstOrDefault(a => a.AccountNumber == AccountNumber);
            // ska man kanske hitta sina egna konton via namn istället?
