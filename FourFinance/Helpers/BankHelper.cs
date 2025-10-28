@@ -54,5 +54,17 @@ namespace FourFinance.Helpers
         {
             return Users.FirstOrDefault(u => (u.UserName.ToLower() == username.ToLower() || u.Email.ToLower() == username.ToLower()) && u.Password == password);
         }
+
+        public static Account? GetAccountByNumber(int accountNumber)
+        {
+            foreach (var user in Users.OfType<Customer>())
+            {
+                var account = user.Accounts.FirstOrDefault(a => a.AccountNumber == accountNumber);
+                if (account != null)
+                    return account;
+            }
+
+            return null;
+        }
     }
 }
