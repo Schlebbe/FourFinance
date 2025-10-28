@@ -1,4 +1,6 @@
 ﻿using FourFinance.Accounts;
+using FourFinance.Helpers;
+using Spectre.Console;
 namespace FourFinance.Users
 {
     public class Customer : IUser
@@ -20,6 +22,14 @@ namespace FourFinance.Users
             Password = password;
             UserName = userName;
             Id = Guid.NewGuid();
+        }
+
+        public void CreateAccount(Currency currency)
+        {
+            var accountNumber = BankHelper.GenerateAccountNumber();
+            var newAccount = new Account(accountNumber, currency);
+            Accounts.Add(newAccount);
+            AnsiConsole.MarkupLine($"Account created [green]successfully[/]. Account number: [blue]{accountNumber}[/]. Currency: [blue]{currency}[/].");
         }
     }
 }

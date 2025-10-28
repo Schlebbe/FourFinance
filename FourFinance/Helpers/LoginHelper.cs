@@ -1,4 +1,5 @@
-﻿using Spectre.Console;
+﻿using FourFinance.Users;
+using Spectre.Console;
 using System.Data;
 
 namespace FourFinance.Helpers
@@ -44,10 +45,19 @@ namespace FourFinance.Helpers
 
                 var user = BankHelper.GetUserByLogin(username, password);
 
-                if (user != null)
+                if (user != null && user.GetType() == typeof(Admin))
                 {
+                    AnsiConsole.Clear();
+                    AnsiConsole.MarkupLine($"Welcome back, Admin [blue]{user.Name}[/]!");
+                    MenuHelper.AdminMenu((Admin)user);
+                    return;
+                }
+                else if (user != null && user.GetType() == typeof(Customer))
+                {
+                    AnsiConsole.Clear();
                     AnsiConsole.MarkupLine($"Welcome back, [blue]{user.Name}[/]!");
-                    return; 
+                    MenuHelper.CustomerMenu((Customer)user);
+                    return;
                 }
 
                 attempts++;
