@@ -1,5 +1,6 @@
 ﻿using FourFinance.Users;
 using Spectre.Console;
+using System.Data;
 
 namespace FourFinance.Helpers
 {
@@ -30,33 +31,45 @@ namespace FourFinance.Helpers
 
         public static void Login()
         {
-            var username = AnsiConsole.Prompt(
-                new TextPrompt<string>("Enter [green]Username/Email[/]:"));
-            var password = AnsiConsole.Prompt(
-                new TextPrompt<string>("Enter [red]Password[/]:")
-                .Secret());
+            int maxAttempts = 3;
+            int attempts = 0;
 
-            var user = BankHelper.GetUserByLogin(username, password);
+            while (attempts < maxAttempts)
+            {
+                var username = AnsiConsole.Prompt(
+                    new TextPrompt<string>("Enter [green]Username/Email[/]:"));
 
-            if (user == null)
-            {
-                AnsiConsole.MarkupLine("[red]Invalid[/] username/email [yellow]or[/] password. Please try again.");
-                Login(); // Retry login
-                return;
-            }
-            else if (user.GetType() == typeof(Admin))
-            {
+                var password = AnsiConsole.Prompt(
+                    new TextPrompt<string>("Enter [red]Password[/]:")
+                    .Secret());
+
+                var user = BankHelper.GetUserByLogin(username, password);
+
+                if (user != null && user.GetType() == typeof(Admin))
+                {
+                    AnsiConsole.Clear();
+                    AnsiConsole.MarkupLine($"Welcome back, Admin [blue]{user.Name}[/]!");
+                    MenuHelper.AdminMenu((Admin)user);
+                    return;
+                }
+                else if (user != null && user.GetType() == typeof(Customer))
+                {
+                    AnsiConsole.Clear();
+                    AnsiConsole.MarkupLine($"Welcome back, [blue]{user.Name}[/]!");
+                    MenuHelper.CustomerMenu((Customer)user);
+                    return;
+                }
+
+                attempts++;
+                int remaining = maxAttempts - attempts;
+
                 AnsiConsole.Clear();
-                AnsiConsole.MarkupLine($"Welcome back, Admin [blue]{user.Name}[/]!");
-                MenuHelper.AdminMenu((Admin)user);
-                return;
-            }
-            else if (user.GetType() == typeof(Customer))
-            {
-                AnsiConsole.Clear();
-                AnsiConsole.MarkupLine($"Welcome back, [blue]{user.Name}[/]!");
-                MenuHelper.CustomerMenu((Customer)user);
-                return;
+                AnsiConsole.MarkupLine($"[red]Invalid username/email or password.[/] {remaining} attempts left");
+
+                if (remaining > 0)
+                {
+                    AnsiConsole.MarkupLine("[yellow]Please try again[/]");
+                }
             }
         }
 
