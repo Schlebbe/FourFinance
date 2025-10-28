@@ -1,4 +1,7 @@
-﻿namespace FourFinance.Accounts
+﻿using FourFinance.Helpers;
+using FourFinance.Users;
+
+namespace FourFinance.Accounts
 {
     public class Account
     {
@@ -44,16 +47,38 @@
 
         public void Transfer(decimal amount, int accountNumber)
         {
-            if (amount > _balance)
+            var targetAccount = BankHelper.GetAccountByNumber(AccountNumber);
+
+            if (targetAccount == null)
             {
-                Console.WriteLine("Insufficient funds for transfer.");
+                Console.WriteLine("Could not find the account number.");
                 return;
             }
+           
+            Withdraw(amount);
+            targetAccount.Deposit(amount);
 
-            _balance -= amount;
-            //TODO: Find target account by accountNumber and deposit amount
-            Console.WriteLine($"{amount} transfered to account {accountNumber}. Current balance: {_balance}");
+            Console.WriteLine($"{amount} transferred to account: {AccountNumber}. Current balance: {_balance}");
             //TODO: Log transaction
+        }
+
+        public void Transfer(decimal amount, int accountNumber, Customer currentUser)
+        {
+            var targetAccount = currentUser.Accounts.FirstOrDefault(a => a.AccountNumber == AccountNumber);
+           // ska man kanske hitta sina egna konton via namn istället?
+
+            if (targetAccount == null)
+            {
+
+                Console.WriteLine("Could not find the account number among your own accounts.");
+                return;
+
+            }
+
+            Withdraw(amount);
+            targetAccount.Deposit(amount);
+            Console.WriteLine($"{amount} has been transferred to your own account: {AccountNumber}");
+            //TODO: Log transaction?
         }
 
         public decimal GetBalance()
