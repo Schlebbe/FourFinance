@@ -9,5 +9,6 @@ namespace FourFinance
             DummyDataHelper.SeedDummyData(); // Seed some dummy users for testing
             LoginHelper.LoginPrompt();
         }
+
     }
 }

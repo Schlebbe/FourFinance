@@ -25,8 +25,8 @@ namespace FourFinance.Helpers
         {
             return Users.FirstOrDefault(u => u.Id == id);
         }
-        
-        public static void GetAccounts(Guid userId)
+
+        public static void PrintAccounts(Guid userId)
         {
             var user = Users.OfType<Customer>().FirstOrDefault(u => u.Id == userId);
 
@@ -58,6 +58,19 @@ namespace FourFinance.Helpers
         public static IUser GetUserByLogin(string username, string password)
         {
             return Users.FirstOrDefault(u => (u.UserName.ToLower() == username.ToLower() || u.Email.ToLower() == username.ToLower()) && u.Password == password);
+        }
+
+        public static Account? GetAccountByNumber(int accountNumber)
+        {
+            foreach (var user in Users.OfType<Customer>())
+            {
+                var account = user.Accounts.FirstOrDefault(a => a.AccountNumber == accountNumber);
+                if (account != null)
+                    return account;
+
+            }
+
+            return null;
         }
     }
 }
