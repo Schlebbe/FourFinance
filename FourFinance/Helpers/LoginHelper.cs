@@ -1,4 +1,5 @@
 ﻿using Spectre.Console;
+using System.Data;
 
 namespace FourFinance.Helpers
 {
@@ -29,22 +30,37 @@ namespace FourFinance.Helpers
 
         public static void Login()
         {
-            var username = AnsiConsole.Prompt(
-                new TextPrompt<string>("Enter [green]Username/Email[/]:"));
-            var password = AnsiConsole.Prompt(
-                new TextPrompt<string>("Enter [red]Password[/]:")
-                .Secret());
+            int maxAttempts = 3;
+            int attempts = 0;
 
-            var user = BankHelper.GetUserByLogin(username, password);
-
-            if (user == null)
+            while (attempts < maxAttempts)
             {
-                AnsiConsole.Markup("Invalid username/email or password. Please try again.");
-                Login(); // Retry login
-                return;
-            }
+                var username = AnsiConsole.Prompt(
+                    new TextPrompt<string>("Enter [green]Username/Email[/]:"));
 
-            AnsiConsole.Markup($"Welcome back, [blue]{user.Name}[/]!");
+                var password = AnsiConsole.Prompt(
+                    new TextPrompt<string>("Enter [red]Password[/]:")
+                    .Secret());
+
+                var user = BankHelper.GetUserByLogin(username, password);
+
+                if (user != null)
+                {
+                    AnsiConsole.MarkupLine($"Welcome back, [blue]{user.Name}[/]!");
+                    return; 
+                }
+
+                attempts++;
+                int remaining = maxAttempts - attempts;
+
+                AnsiConsole.Clear();
+                AnsiConsole.MarkupLine($"[red]Invalid username/email or password.[/] {remaining} attempts left");
+
+                if (remaining > 0)
+                {
+                    AnsiConsole.MarkupLine("[yellow]Please try again[/]");
+                }
+            }
         }
 
         private static void PrintAsciiWelcome()
