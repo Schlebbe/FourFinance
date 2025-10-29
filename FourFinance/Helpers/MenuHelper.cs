@@ -8,14 +8,13 @@ namespace FourFinance.Helpers
     {
         public static void CustomerMenu(Customer customer)
         {
-            AnsiConsole.MarkupLine("Please choose an option from the menu below:");
-            AnsiConsole.WriteLine();
+            AnsiConsole.MarkupLine("Please choose an option from the menu below:\n");
 
             var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .PageSize(3)
                     .AddChoices(new[] {
-                            "List accounts", "Open new account", "Logout"
+                            "List accounts", "Open new account", "Logout" //TODO: Add loan management option
                     }));
 
             switch (choice)
@@ -36,6 +35,7 @@ namespace FourFinance.Helpers
 
         private static void ListAccounts(Customer customer)
         {
+            AnsiConsole.Clear();
             var accounts = BankHelper.GetAccounts(customer.Id);
             if (accounts == null || accounts.Count == 0)
             {
@@ -44,6 +44,8 @@ namespace FourFinance.Helpers
                 CustomerMenu(customer);
                 return;
             }
+
+            AnsiConsole.MarkupLine("Select an [blue]account[/] to manage:\n");
 
             var selectedAccount = AnsiConsole.Prompt(
                 new SelectionPrompt<Account>()
@@ -54,7 +56,32 @@ namespace FourFinance.Helpers
             if (selectedAccount != null)
             {
                 AnsiConsole.Clear();
-                //TODO: Add AccountMenu method to manage selected account
+                AnsiConsole.MarkupLine($"You selected account with number: [blue]{selectedAccount.AccountNumber}[/]");
+                AnsiConsole.MarkupLine($"Current balance: {selectedAccount.GetBalance()} {selectedAccount.GetCurrency()}\n");
+
+                var choice = AnsiConsole.Prompt(
+                    new SelectionPrompt<string>()
+                        .PageSize(3)
+                        .AddChoices(new[] {
+                                "Deposit", "Withdraw", "Transfer", "Return to menu"
+                        }));
+
+                switch (choice)
+                {
+                    case "Deposit":
+
+                        break;
+                    case "Withdraw":
+
+                        break;
+                    case "Transfer":
+
+                        break;
+                    case "Return to menu":
+                        AnsiConsole.Clear();
+                        CustomerMenu(customer);
+                        break;
+                }
             }
 
             return;
