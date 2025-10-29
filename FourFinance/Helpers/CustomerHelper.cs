@@ -4,9 +4,9 @@ using Spectre.Console;
 
 namespace FourFinance.Helpers
 {
-    public static class MenuHelper
+    public static class CustomerHelper
     {
-        public static void CustomerMenu(Customer customer)
+        public static void Menu(Customer customer)
         {
             AnsiConsole.MarkupLine("Please choose an option from the menu below:\n");
 
@@ -41,7 +41,7 @@ namespace FourFinance.Helpers
             {
                 AnsiConsole.Clear();
                 AnsiConsole.MarkupLine("[yellow]You have no accounts. Please open a new account first.[/]");
-                CustomerMenu(customer);
+                Menu(customer);
                 return;
             }
 
@@ -79,7 +79,7 @@ namespace FourFinance.Helpers
                         break;
                     case "Return to menu":
                         AnsiConsole.Clear();
-                        CustomerMenu(customer);
+                        Menu(customer);
                         break;
                 }
             }
@@ -102,13 +102,7 @@ namespace FourFinance.Helpers
             customer.CreateAccount(currency);
 
             // Return the flow to the start of the customer menu
-            CustomerMenu(customer);
-        }
-
-        public static void AdminMenu(Admin admin)
-        {
-
-            throw new NotImplementedException();
+            Menu(customer);
         }
     }
 }
