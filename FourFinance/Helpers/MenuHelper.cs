@@ -1,4 +1,5 @@
-﻿using FourFinance.Users;
+﻿using FourFinance.Accounts;
+using FourFinance.Users;
 using Spectre.Console;
 
 namespace FourFinance.Helpers
@@ -7,22 +8,19 @@ namespace FourFinance.Helpers
     {
         public static void CustomerMenu(Customer customer)
         {
-            AnsiConsole.MarkupLine("Please choose an option from the menu below:");
-            AnsiConsole.WriteLine();
+            AnsiConsole.MarkupLine("Please choose an option from the menu below:\n");
 
             var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .PageSize(3)
                     .AddChoices(new[] {
-                            "List accounts", "Open new account", "Logout"
+                            "List accounts", "Open new account", "Logout" //TODO: Add loan management option
                     }));
 
             switch (choice)
             {
                 case "List accounts":
-                    //BankHelper.GetAccounts(customer.Id); //TODO: Add account listing
-                    //TODO: After listing accounts, allow user to select an account to manage
-                    //New method? AccountMenu(accounts, customer);?
+                    ListAccounts(customer);
                     break;
                 case "Open new account":
                     OpenNewAccountMenu(customer);
@@ -33,6 +31,60 @@ namespace FourFinance.Helpers
                     Environment.Exit(0);
                     break;
             }
+        }
+
+        private static void ListAccounts(Customer customer)
+        {
+            AnsiConsole.Clear();
+            var accounts = BankHelper.GetAccounts(customer.Id);
+            if (accounts == null || accounts.Count == 0)
+            {
+                AnsiConsole.Clear();
+                AnsiConsole.MarkupLine("[yellow]You have no accounts. Please open a new account first.[/]");
+                CustomerMenu(customer);
+                return;
+            }
+
+            AnsiConsole.MarkupLine("Select an [blue]account[/] to manage:\n");
+
+            var selectedAccount = AnsiConsole.Prompt(
+                new SelectionPrompt<Account>()
+                    .PageSize(5)
+                    .UseConverter(a => $"Account number: {a.AccountNumber}\n  Balance: {a.GetBalance()} {a.GetCurrency()}\n")
+                    .AddChoices(accounts));
+
+            if (selectedAccount != null)
+            {
+                AnsiConsole.Clear();
+                AnsiConsole.MarkupLine($"You selected account with number: [blue]{selectedAccount.AccountNumber}[/]");
+                AnsiConsole.MarkupLine($"Current balance: {selectedAccount.GetBalance()} {selectedAccount.GetCurrency()}\n");
+
+                var choice = AnsiConsole.Prompt(
+                    new SelectionPrompt<string>()
+                        .PageSize(3)
+                        .AddChoices(new[] {
+                                "Deposit", "Withdraw", "Transfer", "Return to menu"
+                        }));
+
+                switch (choice)
+                {
+                    case "Deposit":
+
+                        break;
+                    case "Withdraw":
+
+                        break;
+                    case "Transfer":
+
+                        break;
+                    case "Return to menu":
+                        AnsiConsole.Clear();
+                        CustomerMenu(customer);
+                        break;
+                }
+            }
+
+            return;
         }
 
         private static void OpenNewAccountMenu(Customer customer)
