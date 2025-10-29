@@ -49,14 +49,14 @@ namespace FourFinance.Helpers
                 {
                     AnsiConsole.Clear();
                     AnsiConsole.MarkupLine($"Welcome back, Admin [blue]{user.Name}[/]!");
-                    MenuHelper.AdminMenu((Admin)user);
+                    AdminHelper.Menu((Admin)user);
                     return;
                 }
                 else if (user != null && user.GetType() == typeof(Customer))
                 {
                     AnsiConsole.Clear();
                     AnsiConsole.MarkupLine($"Welcome back, [blue]{user.Name}[/]!");
-                    MenuHelper.CustomerMenu((Customer)user);
+                    CustomerHelper.Menu((Customer)user);
                     return;
                 }
 
