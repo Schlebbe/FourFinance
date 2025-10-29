@@ -6,7 +6,7 @@ namespace FourFinance.Helpers
     {
         public static void SeedDummyData()
         {
-            BankHelper.AddUser(new Admin(23, "Admin User", "AdminUser@example.com", "adminpass", "AdminUser"));
+            BankHelper.AddUser(new Admin(23, "Admin", "AdminUser@example.com", "a", "A"));
             BankHelper.AddUser(new Admin(82, "Admin Too", "AdminToo@example.com", "adminpass", "AdminToo"));
             BankHelper.AddUser(new Admin(32, "Admin Also", "AdminAlso@example.com", "adminpass", "AdminAlso"));
             BankHelper.AddUser(new Admin(46, "Admin Adminsson", "AdminAdminsson@example.com", "adminpass", "AdminAdminsson"));

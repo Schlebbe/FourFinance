@@ -1,5 +1,6 @@
 ﻿using FourFinance.Helpers;
 using FourFinance.Users;
+using Spectre.Console;
 
 namespace FourFinance.Accounts
 {
@@ -23,12 +24,12 @@ namespace FourFinance.Accounts
         {
             if (amount > _balance)
             {
-                Console.WriteLine("Insufficient funds.");
+                AnsiConsole.MarkupLine("Insufficient funds.");
                 return;
             }
 
             _balance -= amount;
-            Console.WriteLine($"{amount} withdrawn. Current balance: {_balance}");
+            AnsiConsole.MarkupLine($"{amount} withdrawn. Current balance: {_balance}");
             //TODO: Log transaction
         }
 
@@ -36,12 +37,12 @@ namespace FourFinance.Accounts
         {
             if (amount <= 0)
             {
-                Console.WriteLine("Deposit amount must be positive.");
+                AnsiConsole.MarkupLine("Deposit amount must be positive.");
                 return;
             }
 
             _balance += amount;
-            Console.WriteLine($"{amount} deposited. Current balance: {_balance}");
+            AnsiConsole.MarkupLine($"{amount} deposited. Current balance: {_balance}");
             //TODO: Log transaction
         }
 
@@ -51,14 +52,14 @@ namespace FourFinance.Accounts
 
             if (targetAccount == null)
             {
-                Console.WriteLine("Could not find the account number.");
+                AnsiConsole.MarkupLine("Could not find the account number.");
                 return;
             }
            
             Withdraw(amount);
             targetAccount.Deposit(amount);
 
-            Console.WriteLine($"{amount} transferred to account: {AccountNumber}. Current balance: {_balance}");
+            AnsiConsole.MarkupLine($"{amount} transferred to account: {AccountNumber}. Current balance: {_balance}");
             //TODO: Log transaction
         }
 
@@ -70,20 +71,25 @@ namespace FourFinance.Accounts
             if (targetAccount == null)
             {
 
-                Console.WriteLine("Could not find the account number among your own accounts.");
+                AnsiConsole.MarkupLine("Could not find the account number among your own accounts.");
                 return;
 
             }
 
             Withdraw(amount);
             targetAccount.Deposit(amount);
-            Console.WriteLine($"{amount} has been transferred to your own account: {AccountNumber}");
+            AnsiConsole.MarkupLine($"{amount} has been transferred to your own account: {AccountNumber}");
             //TODO: Log transaction?
         }
 
         public decimal GetBalance()
         {
             return _balance;
+        }
+
+        public Currency GetCurrency()
+        {
+            return _currency;
         }
     }
 }
