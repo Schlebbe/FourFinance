@@ -19,66 +19,58 @@ namespace FourFinance.Accounts
             AccountNumber = accountNumber;
             _currency = currency;
         }
-
-        public void Withdraw(decimal amount)
+        
+        public bool Withdraw(decimal amount)
         {
             if (amount > _balance)
             {
-                AnsiConsole.MarkupLine("Insufficient funds.");
-                return;
+                AnsiConsole.MarkupLine("[red]Insufficient funds.[/]");
+                return false;
             }
 
             _balance -= amount;
-            AnsiConsole.MarkupLine($"{amount} withdrawn. Current balance: {_balance}");
+            
+            return true;
             //TODO: Log transaction
         }
 
-        public void Deposit(decimal amount)
+        public bool Deposit(decimal amount)
         {
             if (amount <= 0)
             {
-                AnsiConsole.MarkupLine("Deposit amount must be positive.");
-                return;
+                AnsiConsole.MarkupLine("[red]Deposit amount must be positive.[/]");
+                return false;
             }
 
             _balance += amount;
-            AnsiConsole.MarkupLine($"{amount} deposited. Current balance: {_balance}");
+            return true;
             //TODO: Log transaction
         }
 
-        public void Transfer(decimal amount, int accountNumber)
+        public bool Transfer(decimal amount, int accountNumber, Customer currentUser)
         {
-            var targetAccount = BankHelper.GetAccountByNumber(AccountNumber);
+            var targetAccount = currentUser.Accounts.FirstOrDefault(a => a.AccountNumber == accountNumber);
 
             if (targetAccount == null)
             {
-                AnsiConsole.MarkupLine("Could not find the account number.");
-                return;
+                AnsiConsole.MarkupLine("[red]Could not find a account with the given account number.[/]");
+                return false;
             }
-           
-            Withdraw(amount);
-            targetAccount.Deposit(amount);
 
-            AnsiConsole.MarkupLine($"{amount} transferred to account: {AccountNumber}. Current balance: {_balance}");
-            //TODO: Log transaction
-        }
+            var result = Withdraw(amount);
 
-        public void Transfer(decimal amount, int accountNumber, Customer currentUser)
-        {
-            var targetAccount = currentUser.Accounts.FirstOrDefault(a => a.AccountNumber == AccountNumber);
-           // ska man kanske hitta sina egna konton via namn istället?
-
-            if (targetAccount == null)
+            if (result == true)
             {
-
-                AnsiConsole.MarkupLine("Could not find the account number among your own accounts.");
-                return;
-
+                targetAccount.Deposit(amount);
+                AnsiConsole.MarkupLine($"[green]{amount} {GetCurrency()}[/] has been transferred to account:[blue] {accountNumber}[/]");
+                return true;
+            }
+            else
+            {
+                AnsiConsole.MarkupLine("[red]Transfer failed.[/]");
+                return false;
             }
 
-            Withdraw(amount);
-            targetAccount.Deposit(amount);
-            AnsiConsole.MarkupLine($"{amount} has been transferred to your own account: {AccountNumber}");
             //TODO: Log transaction?
         }
 
