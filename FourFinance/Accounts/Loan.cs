@@ -1,5 +1,6 @@
 using FourFinance.Helpers;
 using FourFinance.Users;
+using Spectre.Console;
 
 namespace FourFinance.Accounts;
 
@@ -8,27 +9,62 @@ public class Loan
     private decimal Principal { get; set; }
     private decimal Interest { get; set; }
     private decimal LoanAmount { get; set; }
-    private Customer Customer { get;}
+    private Customer Customer { get; }
     private Account AccountNumber;
-
-    public Loan(decimal principal, decimal interest, Account accountNumber)
+    
+    public Loan(Customer customer)
     {
-        AccountNumber = accountNumber;
-        Principal = principal;
-        Interest = interest;
+        Customer = customer ?? throw new ArgumentNullException(nameof(customer));
     }
 
-    public void CreateLoan(decimal principal, decimal interest, decimal loanAmount, Account accountNumber)
+    public void CreateLoan()
     {
-        //TODO: add a way to create a loan
-        foreach (var Account in BankHelper.GetAccounts(Customer.Id))
+        decimal principal = 0;
+        decimal interest = 0.05m;
+        decimal loanAmount = 0;
+        
+        Console.Clear();
+        Console.Write("Desired amount:");
+        bool success = decimal.TryParse(Console.ReadLine(), out principal);
+        decimal maxLoanAmount = Customer.CustomerAssets() - Customer.ActiveLoanAmount;
+        if (success != true)
         {
-            Console.WriteLine($"Account:{accountNumber}\nBalance: {Account.GetBalance()}\n\n");
+            Console.WriteLine("Incorrect input, please try again by pressing any button..");
+            Console.ReadKey();
+            CreateLoan();
         }
 
-    }
+        if (principal < maxLoanAmount && principal > 0)
+        {
+            Console.WriteLine($"{principal} with an interest rate of {interest} will be {principal + (1 + interest)}");
 
-    public decimal CalculateInterest(decimal principal, decimal interest)
+            var selectedAccount = AnsiConsole.Prompt(
+                new SelectionPrompt<Account>()
+                    .PageSize(5)
+                    .UseConverter(a =>
+                        $"Account number: {a.AccountNumber}\n  Balance: {a.GetBalance()} {a.GetCurrency()}\n")
+                    .AddChoices());
+
+            if (selectedAccount != null)
+            {
+                AnsiConsole.Clear();
+                AnsiConsole.MarkupLine($"You selected account with number: [blue]{selectedAccount.AccountNumber}[/]");
+                AnsiConsole.MarkupLine($"Current balance: {selectedAccount.GetBalance()} {selectedAccount.GetCurrency()}\n");
+                selectedAccount.Deposit(principal);
+                AnsiConsole.MarkupLine($"New balance: {selectedAccount.GetBalance()} {selectedAccount.GetCurrency()}\n");
+            }
+
+        }
+        else
+        {
+            Console.Clear();
+            Console.WriteLine("Invalid amount.\nPress any key to continue...");
+            Console.ReadKey();
+            CreateLoan();
+        }
+    }
+    
+    decimal CalculateInterest(decimal principal, decimal interest)
     {
         decimal loanAmount = principal * interest;
         return loanAmount;

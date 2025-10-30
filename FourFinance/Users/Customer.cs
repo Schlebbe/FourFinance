@@ -11,7 +11,9 @@ namespace FourFinance.Users
         public string Email { get; set; }
         public string Password { get; set; }
         public string UserName { get; set; }
+        public decimal ActiveLoanAmount {get;}
         
+        public List<Loan>  Loans { get; set; } = new List<Loan>();
         public List<Account> Accounts { get; set; } = new List<Account>();
 
         public Customer(int age, string name, string email, string password, string userName)
@@ -30,6 +32,16 @@ namespace FourFinance.Users
             var newAccount = new Account(accountNumber, currency);
             Accounts.Add(newAccount);
             AnsiConsole.MarkupLine($"Account created [green]successfully[/]. Account number: [blue]{accountNumber}[/]. Currency: [blue]{currency}[/].");
+        }
+
+        public decimal CustomerAssets() //TODO resolve currency conflict
+        {
+            decimal assets = 0;
+            foreach (var account in Accounts)
+            {
+            assets += account.GetBalance();
+            }
+            return assets;
         }
     }
 }
