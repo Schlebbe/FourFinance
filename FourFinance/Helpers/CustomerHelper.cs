@@ -86,7 +86,6 @@ namespace FourFinance.Helpers
                         Console.ReadKey();
                         ListAccounts(customer);
                         break;
-
                     case "Return to menu":
                         AnsiConsole.Clear();
                         Menu(customer);
