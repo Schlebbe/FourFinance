@@ -74,13 +74,22 @@ namespace FourFinance.Helpers
                 switch (choice)
                 {
                     case "Deposit":
-
+                        HandleDeposit(selectedAccount);
+                        AnsiConsole.MarkupLine("Press any key to continue");
+                        Console.ReadKey();
+                        ListAccounts(customer);
                         break;
                     case "Withdraw":
-
+                        HandleWithdrawal(selectedAccount);
+                        AnsiConsole.MarkupLine("Press any key to continue");
+                        Console.ReadKey();
+                        ListAccounts(customer);
                         break;
                     case "Transfer":
-
+                        HandleTransfer(customer, selectedAccount);
+                        AnsiConsole.MarkupLine("Press any key to continue");
+                        Console.ReadKey();
+                        ListAccounts(customer);
                         break;
                     case "Return to menu":
                         AnsiConsole.Clear();
@@ -88,8 +97,61 @@ namespace FourFinance.Helpers
                         break;
                 }
             }
-
+            
             return;
+        }
+
+        private static void HandleTransfer(Customer customer, Account selectedAccount)
+        {
+            decimal amount = AnsiConsole.Ask<decimal>("Enter amount to transfer: ");
+            int targetAccountNumber = AnsiConsole.Ask<int>("Enter account number: ");
+
+            if (amount <= 0)
+            {
+                AnsiConsole.MarkupLine("[red]Amount must be greater than zero. [/]");
+                return;
+            }
+            var result = selectedAccount.Transfer(amount, targetAccountNumber, customer);
+
+            if (result == true)
+            {
+                AnsiConsole.MarkupLine($"New balance: {selectedAccount.GetBalance()} {selectedAccount.GetCurrency()}");
+                return;
+            }
+        }
+
+        private static void HandleDeposit(Account selectedAccount)
+        {
+            decimal amount = AnsiConsole.Ask<decimal>("Enter amount to deposit: ");
+
+            if (amount <= 0)
+            {
+                AnsiConsole.MarkupLine("[red]Amount must be greater than zero. [/]");
+                return;
+            }
+            var result = selectedAccount.Deposit(amount);
+
+            if (result == true)
+            {
+                AnsiConsole.MarkupLine($"[green]{amount} [/]deposited. Current [blue]balance[/]: [green]{selectedAccount.GetBalance()}[/] {selectedAccount.GetCurrency()}");
+            }
+        }
+
+        private static void HandleWithdrawal(Account selectedAccount)
+        {
+            decimal amount = AnsiConsole.Ask<decimal>("Enter amount to withdraw: ");
+
+            if (amount <= 0)
+            {
+                AnsiConsole.MarkupLine("[red]Amount must be greater than zero. [/]");
+                return;
+            }
+            var result = selectedAccount.Withdraw(amount);
+
+            if (result == true)
+            {
+                AnsiConsole.MarkupLine($"[green]{amount} [/]withdrawn. Current [blue]balance[/]: [green]{selectedAccount.GetBalance()}[/] {selectedAccount.GetCurrency()}");
+            }
         }
 
         private static void OpenNewAccountMenu(Customer customer)
