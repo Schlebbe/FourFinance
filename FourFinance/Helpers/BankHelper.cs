@@ -1,5 +1,6 @@
 ﻿using FourFinance.Accounts;
 using FourFinance.Users;
+using Spectre.Console;
 
 namespace FourFinance.Helpers
 {
@@ -17,7 +18,7 @@ namespace FourFinance.Helpers
         {
             foreach (var user in Users)
             {
-                Console.WriteLine($"Name: {user.Name}, Email: {user.Email}, UserName: {user.UserName}, Age: {user.Age} IsAdmin: {user.GetType() == typeof(Admin)}");
+                AnsiConsole.MarkupLine($"Name: {user.Name}, Email: {user.Email}, UserName: {user.UserName}, Age: {user.Age} IsAdmin: {user.GetType() == typeof(Admin)}");
             }
         }
 
@@ -32,13 +33,13 @@ namespace FourFinance.Helpers
 
             if (user == null)
             {
-                Console.WriteLine($"No user found with ID {userId}");
+                //AnsiConsole.MarkupLine($"No user found with ID {userId}");
                 return null;
             }
 
             if (user.Accounts.Count == 0)
             {
-                Console.WriteLine($"{user.Name} has no accounts.");
+                //AnsiConsole.MarkupLine($"{user.Name} has no accounts.");
                 return null;
             }
             return user.Accounts;
