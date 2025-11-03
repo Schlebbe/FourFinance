@@ -15,25 +15,25 @@ namespace FourFinance.Helpers
                     .PageSize(3)
                     .AddChoices(new[]
                     {
-                        "List accounts", "Open new account", "Logout", "Loan" //TODO: Add loan management option
+                        "List accounts", "Open new account", "Loan", "Logout"
                     }));
 
             switch (choice)
             {
                 case "List accounts":
                     ListAccounts(customer);
-                    break;
+                    return;
                 case "Open new account":
                     OpenNewAccountMenu(customer);
+                    return;
+                case "Loan":
+                    Loan myLoan = new Loan();
+                    myLoan.CreateLoan(customer);
                     return;
                 case "Logout":
                     AnsiConsole.Clear();
                     AnsiConsole.Markup($"Thank you for banking with [green]FourFinance[/]!");
                     Environment.Exit(0);
-                    break;
-                case "Loan":
-                    Loan myLoan = new Loan(customer);
-                    myLoan.CreateLoan();
                     return;
             }
         }
