@@ -20,7 +20,7 @@ namespace FourFinance.Helpers
                 new SelectionPrompt<string>()
                     .PageSize(3)
                     .AddChoices(new[] {
-                            "Add customer", "Logout" //TODO: Remove customer.
+                            "Add customer", "Update exchange rate", "Logout" //TODO: Remove customer.
                     }));
 
             switch (choice)
@@ -29,10 +29,15 @@ namespace FourFinance.Helpers
                     admin.AddCustomer();
                     Menu(admin);
                     break;
+                case "Update exchange rate":
+                    admin.UpdateExchangeRate();
+                    Menu(admin);
+                    break;
                 case "Logout":
                     AnsiConsole.Clear();
                     AnsiConsole.Markup($"Thank you for banking with [green]FourFinance[/]!");
-                    Environment.Exit(0);
+                    AnsiConsole.MarkupLine("Press any key to continue");
+                    LoginHelper.LoginPrompt();
                     break;
             }
         }
