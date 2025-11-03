@@ -11,7 +11,7 @@ namespace FourFinance.Users
         public string Email { get; set; }
         public string Password { get; set; }
         public string UserName { get; set; }
-        public decimal ActiveLoanAmount {get;}
+        public decimal ActiveLoanAmount { get; set; }
         
         public List<Loan>  Loans { get; set; } = new List<Loan>();
         public List<Account> Accounts { get; set; } = new List<Account>();
