@@ -27,8 +27,8 @@ namespace FourFinance.Helpers
                     OpenNewAccountMenu(customer);
                     return;
                 case "Loan":
-                    Loan myLoan = new Loan();
-                    myLoan.CreateLoan(customer);
+                    var loan = new Loan();
+                    loan.CreateLoan(customer);
                     return;
                 case "Logout":
                     AnsiConsole.Clear();
@@ -71,7 +71,7 @@ namespace FourFinance.Helpers
                                 "Deposit", "Withdraw", "Transfer", "Return to menu"
                         }));
 
-                switch (choice)
+                switch (choice) //TODO: Add list loans option.
                 {
                     case "Deposit":
                         HandleDeposit(selectedAccount);
