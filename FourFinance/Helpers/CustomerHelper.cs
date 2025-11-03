@@ -13,23 +13,28 @@ namespace FourFinance.Helpers
             var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .PageSize(3)
-                    .AddChoices(new[] {
-                            "List accounts", "Open new account", "Logout" //TODO: Add loan management option
+                    .AddChoices(new[]
+                    {
+                        "List accounts", "Open new account", "Loan", "Logout"
                     }));
 
             switch (choice)
             {
                 case "List accounts":
                     ListAccounts(customer);
-                    break;
+                    return;
                 case "Open new account":
                     OpenNewAccountMenu(customer);
+                    return;
+                case "Loan":
+                    var loan = new Loan();
+                    loan.CreateLoan(customer);
                     return;
                 case "Logout":
                     AnsiConsole.Clear();
                     AnsiConsole.Markup($"Thank you for banking with [green]FourFinance[/]!");
                     Environment.Exit(0);
-                    break;
+                    return;
             }
         }
 
@@ -66,7 +71,7 @@ namespace FourFinance.Helpers
                                 "Deposit", "Withdraw", "Transfer", "Return to menu"
                         }));
 
-                switch (choice)
+                switch (choice) //TODO: Add list loans option.
                 {
                     case "Deposit":
                         HandleDeposit(selectedAccount);

@@ -31,5 +31,15 @@ namespace FourFinance.Users
             Accounts.Add(newAccount);
             AnsiConsole.MarkupLine($"Account created [green]successfully[/]. Account number: [blue]{accountNumber}[/]. Currency: [blue]{currency}[/].");
         }
+
+        public decimal CustomerAssets() //TODO resolve currency conflict
+        {
+            decimal assets = 0;
+            foreach (var account in Accounts)
+            {
+                assets += account.GetBalance() - account.GetActiveLoanAmount();
+            }
+            return assets;
+        }
     }
 }

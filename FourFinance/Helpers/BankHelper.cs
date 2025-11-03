@@ -26,7 +26,7 @@ namespace FourFinance.Helpers
         {
             return Users.FirstOrDefault(u => u.Id == id);
         }
-
+        
         public static List<Account>? GetAccounts(Guid userId)
         {
             var user = Users.OfType<Customer>().FirstOrDefault(u => u.Id == userId);
@@ -63,7 +63,6 @@ namespace FourFinance.Helpers
                 var account = user.Accounts.FirstOrDefault(a => a.AccountNumber == accountNumber);
                 if (account != null)
                     return account;
-
             }
 
             return null;
