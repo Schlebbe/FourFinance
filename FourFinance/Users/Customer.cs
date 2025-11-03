@@ -11,9 +11,7 @@ namespace FourFinance.Users
         public string Email { get; set; }
         public string Password { get; set; }
         public string UserName { get; set; }
-        public decimal ActiveLoanAmount { get; set; }
         
-        public List<Loan>  Loans { get; set; } = new List<Loan>();
         public List<Account> Accounts { get; set; } = new List<Account>();
 
         public Customer(int age, string name, string email, string password, string userName)
@@ -39,7 +37,7 @@ namespace FourFinance.Users
             decimal assets = 0;
             foreach (var account in Accounts)
             {
-            assets += account.GetBalance();
+                assets += account.GetBalance() - account.GetActiveLoanAmount();
             }
             return assets;
         }

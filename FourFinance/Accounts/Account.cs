@@ -10,7 +10,7 @@ namespace FourFinance.Accounts
         public int AccountNumber { get; set; }
         private decimal _balance;
         private Currency _currency;
-        //public List<Loan> Loans { get; set; }
+        public List<Loan> Loans { get; set; } = new List<Loan>();
         //public List<Log> Logs { get; set; }
 
         public Account(int accountNumber, Currency currency)
@@ -82,6 +82,16 @@ namespace FourFinance.Accounts
         public Currency GetCurrency()
         {
             return _currency;
+        }
+
+        public decimal GetActiveLoanAmount()
+        {
+            decimal totalLoanAmount = 0;
+            foreach (var loan in Loans)
+            {
+                totalLoanAmount += loan.Principal;
+            }
+            return totalLoanAmount;
         }
     }
 }
