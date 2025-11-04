@@ -68,7 +68,7 @@ namespace FourFinance.Helpers
                     new SelectionPrompt<string>()
                         .PageSize(3)
                         .AddChoices(new[] {
-                                "Deposit", "Withdraw", "Transfer", "Return to menu"
+                                "Deposit", "Withdraw", "Transfer", "Return to menu", "History"
                         }));
 
                 switch (choice) //TODO: Add list loans option.
@@ -94,6 +94,11 @@ namespace FourFinance.Helpers
                     case "Return to menu":
                         AnsiConsole.Clear();
                         Menu(customer);
+                        break;
+                    case "History":
+                        AnsiConsole.Clear();
+                        selectedAccount.printLogs();
+                        ListAccounts(customer);
                         break;
                 }
             }

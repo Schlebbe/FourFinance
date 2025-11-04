@@ -82,6 +82,7 @@ public class Loan
                 AnsiConsole.MarkupLine($"Previous balance: [green]{selectedAccount.GetBalance()} {selectedAccount.GetCurrency()}[/]\n");
                 selectedAccount.Deposit(principal);
                 selectedAccount.Loans.Add(this);
+
                 AnsiConsole.MarkupLine($"New balance: [green]{selectedAccount.GetBalance()} {selectedAccount.GetCurrency()}[/]\n");
                 CustomerHelper.Menu(customer);
             }
