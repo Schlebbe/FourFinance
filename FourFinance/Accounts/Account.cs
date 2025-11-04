@@ -11,8 +11,22 @@ namespace FourFinance.Accounts
         private decimal _balance;
         private string _currency;
         public List<Loan> Loans { get; set; } = new List<Loan>();
-        //public List<Log> Logs { get; set; }
+        public List<TransactionLog> Logs { get; set; } = new List<TransactionLog>();
 
+        private void LogTransaction(string type, decimal amount, string message = "", int? targetAccountNumber = null)
+        {
+            Logs.Add(new TransactionLog
+            {
+                Timestamp = DateTime.Now,
+                Type = type,
+                Amount = amount,
+                AccountNumber = AccountNumber,
+                TargetAccountNumber = targetAccountNumber,
+                Currency = _currency.ToString(),
+                BalanceAfter = _balance,
+                Message = message
+            });
+        }
         public Account(int accountNumber, string currency)
         {
             Id = Guid.NewGuid();
@@ -25,13 +39,13 @@ namespace FourFinance.Accounts
             if (amount > _balance)
             {
                 AnsiConsole.MarkupLine("[red]Insufficient funds.[/]");
+                LogTransaction("Withdrawal Failed", amount, "Insufficient funds");
                 return false;
             }
 
             _balance -= amount;
-
+            LogTransaction("Withdrawal", amount, "Withdrawal successful");
             return true;
-            //TODO: Log transaction
         }
 
         public bool Deposit(decimal amount)
@@ -39,12 +53,13 @@ namespace FourFinance.Accounts
             if (amount <= 0)
             {
                 AnsiConsole.MarkupLine("[red]Deposit amount must be positive.[/]");
+                LogTransaction("Deposit Failed", amount, "Invalid deposit amount");
                 return false;
             }
 
             _balance += amount;
+            LogTransaction("Deposit", amount, "Deposit successful");
             return true;
-            //TODO: Log transaction
         }
 
         public bool Transfer(decimal amount, int accountNumber, Customer currentUser)
@@ -54,6 +69,7 @@ namespace FourFinance.Accounts
             if (targetAccount == null)
             {
                 AnsiConsole.MarkupLine("[red]Could not find a account with the given account number.[/]");
+                LogTransaction("Transfer Failed", amount, "Target account not found", accountNumber);
                 return false;
             }
 
@@ -77,11 +93,14 @@ namespace FourFinance.Accounts
                 }
 
                 targetAccount.Deposit(amount);
+                LogTransaction("Transfer", amount, "Transfer successful", accountNumber);
                 AnsiConsole.MarkupLine($"[green]{amount:F2} {GetCurrency()}[/] has been transferred to account:[blue] {accountNumber}[/]");
+                targetAccount.LogTransaction("Transfer In", amount, "Transfer received", accountNumber);
                 return true;
             }
             else
             {
+                LogTransaction("Transfer Failed", amount, "Withdrawal failed", accountNumber);
                 AnsiConsole.MarkupLine("[red]Transfer failed.[/]");
                 return false;
             }
@@ -107,6 +126,18 @@ namespace FourFinance.Accounts
                 totalLoanAmount += loan.Principal;
             }
             return totalLoanAmount;
+        }
+        
+        public void printLogs()
+        {
+            foreach (var log in Logs)
+            {
+                AnsiConsole.MarkupLine($"[grey]{log.Timestamp:G}[/] - [cyan]{log.Type}[/] - [green]{log.Amount} {log.Currency}[/] - " +
+                                       $"Balance: [blue]{log.BalanceAfter}[/] - [white]{log.Message}[/]");
+            }
+            AnsiConsole.WriteLine("\nPress any key to continue...");
+            Console.ReadKey();
+            AnsiConsole.Clear();
         }
     }
 }

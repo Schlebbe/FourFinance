@@ -68,7 +68,7 @@ namespace FourFinance.Helpers
                     new SelectionPrompt<string>()
                         .PageSize(3)
                         .AddChoices(new[] {
-                                "Deposit", "Withdraw", "Transfer", "Return to menu"
+                                "Deposit", "Withdraw", "Transfer", "History", "Return to menu"
                         }));
 
                 switch (choice)
@@ -87,6 +87,11 @@ namespace FourFinance.Helpers
                         break;
                     case "Transfer":
                         HandleTransfer(customer, selectedAccount);
+                        ListAccounts(customer);
+                        break;
+                    case "History":
+                        AnsiConsole.Clear();
+                        selectedAccount.printLogs();
                         ListAccounts(customer);
                         break;
                     case "Return to menu":
