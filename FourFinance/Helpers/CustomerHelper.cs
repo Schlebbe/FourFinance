@@ -86,9 +86,17 @@ namespace FourFinance.Helpers
                         ListAccounts(customer);
                         break;
                     case "Transfer":
-                        HandleTransfer(customer, selectedAccount);
-                        AnsiConsole.MarkupLine("Press any key to continue");
-                        Console.ReadKey();
+                        decimal amount = AnsiConsole.Ask<decimal>("Enter amount to transfer: ");
+                        int targetAccountNumber = AnsiConsole.Ask<int>("Enter account number: ");
+
+                        if (amount <= 0)
+                        {
+                            AnsiConsole.MarkupLine("[red]Amount must be greater than zero. [/]");
+                            ListAccounts(customer);
+                        }
+                        TransactionHelper.pendingActions.Enqueue(() => HandleTransfer(customer, selectedAccount, amount, targetAccountNumber));
+                        //AnsiConsole.MarkupLine("Press any key to continue");
+                        //Console.ReadKey();
                         ListAccounts(customer);
                         break;
                     case "Return to menu":
@@ -101,16 +109,9 @@ namespace FourFinance.Helpers
             return;
         }
 
-        private static void HandleTransfer(Customer customer, Account selectedAccount)
+        private static async Task HandleTransfer(Customer customer, Account selectedAccount, decimal amount, int targetAccountNumber)
         {
-            decimal amount = AnsiConsole.Ask<decimal>("Enter amount to transfer: ");
-            int targetAccountNumber = AnsiConsole.Ask<int>("Enter account number: ");
-
-            if (amount <= 0)
-            {
-                AnsiConsole.MarkupLine("[red]Amount must be greater than zero. [/]");
-                return;
-            }
+            
             var result = selectedAccount.Transfer(amount, targetAccountNumber, customer);
 
             if (result == true)
