@@ -71,7 +71,7 @@ namespace FourFinance.Helpers
                                 "Deposit", "Withdraw", "Transfer", "Return to menu"
                         }));
 
-                switch (choice) //TODO: Add list loans option.
+                switch (choice)
                 {
                     case "Deposit":
                         HandleDeposit(selectedAccount);
@@ -87,8 +87,6 @@ namespace FourFinance.Helpers
                         break;
                     case "Transfer":
                         HandleTransfer(customer, selectedAccount);
-                        AnsiConsole.MarkupLine("Press any key to continue");
-                        Console.ReadKey();
                         ListAccounts(customer);
                         break;
                     case "Return to menu":
@@ -97,11 +95,10 @@ namespace FourFinance.Helpers
                         break;
                 }
             }
-            
             return;
         }
 
-        private static void HandleTransfer(Customer customer, Account selectedAccount)
+        private static async Task HandleTransfer(Customer customer, Account selectedAccount)
         {
             decimal amount = AnsiConsole.Ask<decimal>("Enter amount to transfer: ");
             int targetAccountNumber = AnsiConsole.Ask<int>("Enter account number: ");
@@ -109,15 +106,19 @@ namespace FourFinance.Helpers
             if (amount <= 0)
             {
                 AnsiConsole.MarkupLine("[red]Amount must be greater than zero. [/]");
-                return;
+                ListAccounts(customer);
             }
-            var result = selectedAccount.Transfer(amount, targetAccountNumber, customer);
 
-            if (result == true)
+            TransactionHelper.pendingActions.Enqueue(() =>
             {
-                AnsiConsole.MarkupLine($"New balance: [green]{selectedAccount.GetBalance():F2} {selectedAccount.GetCurrency()}[/]");
-                return;
-            }
+                var result = selectedAccount.Transfer(amount, targetAccountNumber, customer);
+
+                if (result == true)
+                {
+                    AnsiConsole.MarkupLine($"New balance: [green]{selectedAccount.GetBalance():F2} {selectedAccount.GetCurrency()}[/]");
+                }
+                return Task.CompletedTask;
+            });
         }
 
         private static void HandleDeposit(Account selectedAccount)
