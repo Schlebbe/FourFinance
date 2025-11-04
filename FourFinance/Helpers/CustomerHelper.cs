@@ -98,7 +98,6 @@ namespace FourFinance.Helpers
                         AnsiConsole.Clear();
                         Menu(customer);
                         break;
-
                 }
             }
             return;
