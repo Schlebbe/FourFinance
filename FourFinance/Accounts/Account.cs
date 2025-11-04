@@ -9,17 +9,17 @@ namespace FourFinance.Accounts
         public Guid Id { get; set; }
         public int AccountNumber { get; set; }
         private decimal _balance;
-        private Currency _currency;
+        private string _currency;
         public List<Loan> Loans { get; set; } = new List<Loan>();
         //public List<Log> Logs { get; set; }
 
-        public Account(int accountNumber, Currency currency)
+        public Account(int accountNumber, string currency)
         {
             Id = Guid.NewGuid();
             AccountNumber = accountNumber;
             _currency = currency;
         }
-        
+
         public bool Withdraw(decimal amount)
         {
             if (amount > _balance)
@@ -29,7 +29,7 @@ namespace FourFinance.Accounts
             }
 
             _balance -= amount;
-            
+
             return true;
             //TODO: Log transaction
         }
@@ -57,12 +57,27 @@ namespace FourFinance.Accounts
                 return false;
             }
 
+            if (targetAccount.AccountNumber == AccountNumber)
+            {
+                AnsiConsole.MarkupLine("[red]You cannot transfer to the same account.[/]");
+                return false;
+            }
+
             var result = Withdraw(amount);
 
             if (result == true)
             {
+                if (targetAccount.GetCurrency() != GetCurrency())
+                {
+                    var convertedAmount = BankHelper.CalculateExchange(amount, GetCurrency(), targetAccount.GetCurrency());
+
+                    targetAccount.Deposit(convertedAmount);
+                    AnsiConsole.MarkupLine($"[green]{amount:F2} {GetCurrency()}[/] has been exchanged to [green]{convertedAmount:F2} {targetAccount.GetCurrency()}[/] and transferred to account:[blue] {accountNumber}[/]");
+                    return true;
+                }
+
                 targetAccount.Deposit(amount);
-                AnsiConsole.MarkupLine($"[green]{amount} {GetCurrency()}[/] has been transferred to account:[blue] {accountNumber}[/]");
+                AnsiConsole.MarkupLine($"[green]{amount:F2} {GetCurrency()}[/] has been transferred to account:[blue] {accountNumber}[/]");
                 return true;
             }
             else
@@ -79,7 +94,7 @@ namespace FourFinance.Accounts
             return _balance;
         }
 
-        public Currency GetCurrency()
+        public string GetCurrency()
         {
             return _currency;
         }

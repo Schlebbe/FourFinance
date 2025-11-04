@@ -24,7 +24,7 @@ namespace FourFinance.Users
             Id = Guid.NewGuid();
         }
 
-        public void CreateAccount(Currency currency)
+        public void CreateAccount(string currency)
         {
             var accountNumber = BankHelper.GenerateAccountNumber();
             var newAccount = new Account(accountNumber, currency);

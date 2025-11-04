@@ -55,14 +55,14 @@ namespace FourFinance.Helpers
             var selectedAccount = AnsiConsole.Prompt(
                 new SelectionPrompt<Account>()
                     .PageSize(5)
-                    .UseConverter(a => $"Account number: {a.AccountNumber}\n  Balance: {a.GetBalance()} {a.GetCurrency()}\n")
+                    .UseConverter(a => $"Account number: {a.AccountNumber}\n  Balance: {a.GetBalance():F2} {a.GetCurrency()}\n")
                     .AddChoices(accounts));
 
             if (selectedAccount != null)
             {
                 AnsiConsole.Clear();
                 AnsiConsole.MarkupLine($"You selected account with number: [blue]{selectedAccount.AccountNumber}[/]");
-                AnsiConsole.MarkupLine($"Current balance: {selectedAccount.GetBalance()} {selectedAccount.GetCurrency()}\n");
+                AnsiConsole.MarkupLine($"Current balance: [green]{selectedAccount.GetBalance():F2} {selectedAccount.GetCurrency()}[/]\n");
 
                 var choice = AnsiConsole.Prompt(
                     new SelectionPrompt<string>()
@@ -115,7 +115,7 @@ namespace FourFinance.Helpers
 
             if (result == true)
             {
-                AnsiConsole.MarkupLine($"New balance: {selectedAccount.GetBalance()} {selectedAccount.GetCurrency()}");
+                AnsiConsole.MarkupLine($"New balance: [green]{selectedAccount.GetBalance():F2} {selectedAccount.GetCurrency()}[/]");
                 return;
             }
         }
@@ -133,7 +133,7 @@ namespace FourFinance.Helpers
 
             if (result == true)
             {
-                AnsiConsole.MarkupLine($"[green]{amount} [/]deposited. Current [blue]balance[/]: [green]{selectedAccount.GetBalance()}[/] {selectedAccount.GetCurrency()}");
+                AnsiConsole.MarkupLine($"[green]{amount:F2} [/]deposited. Current [blue]balance[/]: [green]{selectedAccount.GetBalance():F2}[/] {selectedAccount.GetCurrency()}");
             }
         }
 
@@ -150,7 +150,7 @@ namespace FourFinance.Helpers
 
             if (result == true)
             {
-                AnsiConsole.MarkupLine($"[green]{amount} [/]withdrawn. Current [blue]balance[/]: [green]{selectedAccount.GetBalance()}[/] {selectedAccount.GetCurrency()}");
+                AnsiConsole.MarkupLine($"[green]{amount:F2} [/]withdrawn. Current [blue]balance[/]: [green]{selectedAccount.GetBalance():F2}[/] {selectedAccount.GetCurrency()}");
             }
         }
 
@@ -160,10 +160,10 @@ namespace FourFinance.Helpers
 
             // Present Currency enum values as selectable choices and return a Currency value
             var currency = AnsiConsole.Prompt(
-                new SelectionPrompt<Currency>()
+                new SelectionPrompt<string>()
                     .Title("What [blue]currency[/] would you like to use?")
                     .PageSize(10)
-                    .AddChoices(Enum.GetValues<Currency>()));
+                    .AddChoices(BankHelper.GetExchangeRateKeys()));
 
             AnsiConsole.Clear();
             customer.CreateAccount(currency);

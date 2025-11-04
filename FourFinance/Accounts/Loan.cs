@@ -46,7 +46,7 @@ public class Loan
             new SelectionPrompt<Account>()
                 .PageSize(5)
                 .UseConverter(a =>
-                    $"Account number: {a.AccountNumber}\n  Balance: {a.GetBalance()} {a.GetCurrency()}\n")
+                    $"Account number: {a.AccountNumber}\n  Balance: {a.GetBalance():F2} {a.GetCurrency()}\n")
                 .AddChoices(accounts));
 
         var remainingLoanAmount = (assets * 5) - selectedAccount.GetActiveLoanAmount();
@@ -67,22 +67,22 @@ public class Loan
         if (remainingLoanAmount < Principal)
         {
             AnsiConsole.Clear();
-            AnsiConsole.MarkupLine($"[red][green]{remainingLoanAmount} {selectedAccount.GetCurrency()}[/] available to loan. Desired [green]loan[/] amount: [green]{Principal} {selectedAccount.GetCurrency()}[/][/]");
+            AnsiConsole.MarkupLine($"[red][green]{remainingLoanAmount:F2} {selectedAccount.GetCurrency()}[/] available to loan. Desired [green]loan[/] amount: [green]{Principal} {selectedAccount.GetCurrency()}[/][/]");
             CustomerHelper.Menu(customer);
             return;
         }
 
         if (principal <= maxLoanAmount && principal > 0)
         {
-            AnsiConsole.MarkupLine($"[green]{principal} {selectedAccount.GetCurrency()}[/] with an [salmon1]interest[/] of [salmon1]{(int)(InterestRate * 100m)}%[/] will be [green]{principal * (1 + InterestRate)} {selectedAccount.GetCurrency()}[/]");
+            AnsiConsole.MarkupLine($"[green]{principal:F2} {selectedAccount.GetCurrency()}[/] with an [salmon1]interest[/] of [salmon1]{(int)(InterestRate * 100m)}%[/] will be [green]{principal * (1 + InterestRate)} {selectedAccount.GetCurrency()}[/]");
 
             if (selectedAccount != null)
             {
                 AnsiConsole.MarkupLine($"You selected [blue]account[/] with number: [blue]{selectedAccount.AccountNumber}[/]");
-                AnsiConsole.MarkupLine($"Previous balance: [green]{selectedAccount.GetBalance()} {selectedAccount.GetCurrency()}[/]\n");
+                AnsiConsole.MarkupLine($"Previous balance: [green]{selectedAccount.GetBalance():F2} {selectedAccount.GetCurrency()}[/]\n");
                 selectedAccount.Deposit(principal);
                 selectedAccount.Loans.Add(this);
-                AnsiConsole.MarkupLine($"New balance: [green]{selectedAccount.GetBalance()} {selectedAccount.GetCurrency()}[/]\n");
+                AnsiConsole.MarkupLine($"New balance: [green]{selectedAccount.GetBalance():F2} {selectedAccount.GetCurrency()}[/]\n");
                 CustomerHelper.Menu(customer);
             }
         }
