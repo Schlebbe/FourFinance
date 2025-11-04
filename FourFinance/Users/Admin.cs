@@ -90,5 +90,40 @@ namespace FourFinance.Users
             AnsiConsole.MarkupLine("Press any key to return to menu.");
             Console.ReadKey();
         }
+
+        public void UpdateExchangeRate()
+        {
+            Console.Clear();
+            // Present Currency enum values as selectable choices and return a Currency value
+            var currency = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("What [blue]currency[/] would you like to update?")
+                    .PageSize(10)
+                    .AddChoices(BankHelper.GetExchangeRateKeys()));
+
+            if (currency == "SEK")
+            {
+                AnsiConsole.MarkupLine("[red]Cannot update the base currency SEK exchange rate.[/]");
+                AnsiConsole.MarkupLine("Press any key to continue");
+                Console.ReadKey();
+                UpdateExchangeRate();
+                return;
+            }
+
+            decimal rate = AnsiConsole.Ask<decimal>($"Enter the new exchange rate for [blue]{currency}[/]:");
+            if (rate <= 0)
+            {
+                AnsiConsole.MarkupLine("[red]Invalid[/] [blue]exchange rate.[/] Please enter a positive number.");
+                AnsiConsole.MarkupLine("Press any key to continue");
+                Console.ReadKey();
+                UpdateExchangeRate();
+                return;
+            }
+
+            BankHelper.UpdateExchangeRate(currency, rate);
+            AnsiConsole.MarkupLine($"Updated exchange rate for [blue]{currency}[/] to [green]{rate}[/].");
+            AnsiConsole.MarkupLine("Press any key to return to menu.");
+            Console.ReadKey();
+        }
     }
 }

@@ -15,7 +15,7 @@ namespace FourFinance.Helpers
             BankHelper.AddUser(new Customer(25, "John Doe", "JohnDoe@example.com", "password123", "JohnDoe"));
             BankHelper.AddUser(new Customer(40, "Jane Smith", "JaneSmith@example.com", "securepass", "JaneSmith"));
             BankHelper.AddUser(new Customer(30, "Alice Johnson", "AliceJohnson@example.com", "alicepass", "AliceJohnson"));
-            BankHelper.AddUser(new Customer(28, "Bob Brown", "BobBrown@example.com", "bobsecure", "BobBrown"));
+            BankHelper.AddUser(new Customer(28, "Bob Brown", "BobBrown@example.com", "b", "b"));
             BankHelper.AddUser(new Customer(35, "Charlie Davis", "CharlieDavis@example.com", "charlie123", "CharlieDavis"));
         }
     }
