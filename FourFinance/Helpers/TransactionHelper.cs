@@ -11,6 +11,7 @@ namespace FourFinance.Helpers
     public static class TransactionHelper
     {
         public static readonly ConcurrentQueue<Func<Task>> pendingActions = new ConcurrentQueue<Func<Task>>();
+        public static CancellationTokenSource cts = new CancellationTokenSource();
 
         public static async Task StartSchedulerAsync(CancellationToken token) 
         {
@@ -32,5 +33,4 @@ namespace FourFinance.Helpers
             }
         }
     }
-    
 }
