@@ -16,7 +16,7 @@ namespace FourFinance.Helpers
         {
             while (!token.IsCancellationRequested) 
             {
-                await Task.Delay(TimeSpan.FromSeconds(30), token);
+                await Task.Delay(TimeSpan.FromMinutes(15), token);
 
                 while (pendingActions.TryDequeue(out var action)) 
                 {
