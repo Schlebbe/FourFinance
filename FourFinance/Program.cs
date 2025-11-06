@@ -1,10 +1,10 @@
 ﻿using FourFinance.Helpers;
-using System.Threading.Tasks;
 
 namespace FourFinance
 {
     internal class Program
     {
+        public static readonly SemaphoreSlim ConsoleLock = new(1, 1);
         static async Task Main(string[] args)
         {
             var taskScheduler = TransactionHelper.StartSchedulerAsync(TransactionHelper.cts.Token);
