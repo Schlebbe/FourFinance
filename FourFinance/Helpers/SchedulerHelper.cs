@@ -1,10 +1,6 @@
 ﻿using Spectre.Console;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FourFinance.Helpers
 {
@@ -17,7 +13,7 @@ namespace FourFinance.Helpers
         {
             while (!token.IsCancellationRequested) 
             {
-                await Task.Delay(TimeSpan.FromSeconds(15), token);
+                await Task.Delay(TimeSpan.FromMinutes(15), token);
 
                 while (pendingTransactions.TryDequeue(out var action)) 
                 {
