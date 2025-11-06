@@ -20,7 +20,7 @@ namespace FourFinance.Helpers
                 new SelectionPrompt<string>()
                     .PageSize(3)
                     .AddChoices(new[] {
-                            "Add customer", "Update exchange rate", "Logout" //TODO: Remove customer.
+                            "Add customer", "Update exchange rate", "Logout"
                     }));
 
             switch (choice)
