@@ -23,11 +23,16 @@ namespace FourFinance.Helpers
                 {
                     try
                     {
+                        await Program.ConsoleLock.WaitAsync(token);
                         await action();
                     }
                     catch (Exception ex) 
                     {
                         AnsiConsole.MarkupLine($"Error running action: {ex.Message}");
+                    }
+                    finally
+                    {
+                        Program.ConsoleLock.Release();
                     }
                 }
             }

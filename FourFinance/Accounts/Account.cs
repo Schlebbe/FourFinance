@@ -89,6 +89,8 @@ namespace FourFinance.Accounts
 
                     targetAccount.Deposit(convertedAmount);
                     AnsiConsole.MarkupLine($"[green]{amount:F2} {GetCurrency()}[/] has been exchanged to [green]{convertedAmount:F2} {targetAccount.GetCurrency()}[/] and transferred to account:[blue] {accountNumber}[/]");
+                    LogTransaction("Transfer", amount, "Transfer successful", accountNumber);
+                    targetAccount.LogTransaction("Transfer In", convertedAmount, "Transfer received", accountNumber);
                     return true;
                 }
 
@@ -127,7 +129,7 @@ namespace FourFinance.Accounts
             }
             return totalLoanAmount;
         }
-        
+
         public void printLogs()
         {
             foreach (var log in Logs)

@@ -33,12 +33,13 @@ namespace FourFinance.Helpers
                 case "Logout":
                     AnsiConsole.Clear();
                     AnsiConsole.Markup($"Thank you for banking with [green]FourFinance[/]!");
-                    Environment.Exit(0);
+                    AnsiConsole.MarkupLine("Press any key to continue");
+                    LoginHelper.LoginPrompt();
                     return;
             }
         }
 
-        private static void ListAccounts(Customer customer)
+        private async static void ListAccounts(Customer customer)
         {
             AnsiConsole.Clear();
             var accounts = BankHelper.GetAccounts(customer.Id);
@@ -52,11 +53,21 @@ namespace FourFinance.Helpers
 
             AnsiConsole.MarkupLine("Select an [blue]account[/] to manage:\n");
 
-            var selectedAccount = AnsiConsole.Prompt(
-                new SelectionPrompt<Account>()
-                    .PageSize(5)
-                    .UseConverter(a => $"Account number: {a.AccountNumber}\n  Balance: {a.GetBalance():F2} {a.GetCurrency()}\n")
-                    .AddChoices(accounts));
+            Account? selectedAccount = null;
+            await Program.ConsoleLock.WaitAsync();
+            try
+            {
+                selectedAccount = AnsiConsole.Prompt(
+                    new SelectionPrompt<Account>()
+                        .PageSize(5)
+                        .UseConverter(a => $"Account: {a.AccountNumber}\n  Balance: {a.GetBalance():F2} {a.GetCurrency()}\n")
+                        .AddChoices(accounts)
+                );
+            }
+            finally
+            {
+                Program.ConsoleLock.Release();
+            }
 
             if (selectedAccount != null)
             {
