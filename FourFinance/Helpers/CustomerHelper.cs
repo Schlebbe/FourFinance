@@ -143,7 +143,7 @@ namespace FourFinance.Helpers
 
             SchedulerHelper.pendingTransactions.Enqueue(() =>
             {
-                var result = selectedAccount.Transfer(amount, targetAccountNumber, customer);
+                var result = selectedAccount.Transfer(amount, targetAccountNumber);
 
                 if (result == true)
                 {

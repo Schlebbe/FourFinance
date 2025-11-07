@@ -69,9 +69,9 @@ namespace FourFinance.Accounts
             return true;
         }
 
-        public bool Transfer(decimal amount, int accountNumber, Customer currentUser)
+        public bool Transfer(decimal amount, int accountNumber)
         {
-            var targetAccount = currentUser.Accounts.FirstOrDefault(a => a.AccountNumber == accountNumber);
+            var targetAccount = BankHelper.GetAccountByNumber(accountNumber);
 
             if (targetAccount == null)
             {
