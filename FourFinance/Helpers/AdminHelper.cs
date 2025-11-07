@@ -1,10 +1,5 @@
 ﻿using FourFinance.Users;
 using Spectre.Console;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FourFinance.Helpers
 {
@@ -20,7 +15,7 @@ namespace FourFinance.Helpers
                 new SelectionPrompt<string>()
                     .PageSize(3)
                     .AddChoices(new[] {
-                            "Add customer", "Update exchange rate", "Logout"
+                            "Add customer", "Update exchange rate", "List all customers", "Logout"
                     }));
 
             switch (choice)
@@ -31,6 +26,10 @@ namespace FourFinance.Helpers
                     break;
                 case "Update exchange rate":
                     admin.UpdateExchangeRate();
+                    Menu(admin);
+                    break;
+                case "List all customers":
+                    BankHelper.PrintUsers();
                     Menu(admin);
                     break;
                 case "Logout":

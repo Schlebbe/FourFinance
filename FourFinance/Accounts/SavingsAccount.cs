@@ -8,14 +8,14 @@ namespace FourFinance.Accounts
         public SavingsAccount(int accountNumber, string currency) : base(accountNumber, currency)
         { }
 
-        public override bool Deposit(decimal amount, bool shouldLog, bool isInterest)
+        public override bool Deposit(decimal amount, bool shouldPrint, bool isInterest)
         {
-            if (!base.Deposit(amount, shouldLog, isInterest))
+            if (!base.Deposit(amount, shouldPrint, isInterest))
             {
                 return false;
             }
 
-            if (!shouldLog)
+            if (shouldPrint == false)
             {
                 return true;
             }

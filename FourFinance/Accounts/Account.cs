@@ -1,5 +1,4 @@
 ﻿using FourFinance.Helpers;
-using FourFinance.Users;
 using Spectre.Console;
 
 namespace FourFinance.Accounts
@@ -49,14 +48,15 @@ namespace FourFinance.Accounts
             return true;
         }
 
-        public virtual bool Deposit(decimal amount, bool shouldLog, bool isInterest)
+        public virtual bool Deposit(decimal amount, bool shouldPrint, bool isInterest)
         {
+            // Determine log type and message based on whether it's interest or a regular deposit using ternary operators
             var logType = isInterest ? "Interest" : "Deposit";
             var logMessage = isInterest ? "Interest applied" : "Deposit successful";
 
             if (amount <= 0)
             {
-                if (shouldLog)
+                if (shouldPrint)
                 {
                     AnsiConsole.MarkupLine("[red]Deposit amount must be positive.[/]");
                 }
@@ -75,7 +75,7 @@ namespace FourFinance.Accounts
 
             if (targetAccount == null)
             {
-                AnsiConsole.MarkupLine("[red]Could not find a account with the given account number.[/]");
+                AnsiConsole.MarkupLine("[red]Could not find an account with the given account number.[/]");
                 LogTransaction("Transfer Failed", amount, "Target account not found", accountNumber);
                 return false;
             }
@@ -90,24 +90,28 @@ namespace FourFinance.Accounts
 
             if (result == true)
             {
+                // Check if currency conversion is needed
                 if (targetAccount.GetCurrency() != GetCurrency())
                 {
                     var convertedAmount = BankHelper.CalculateExchange(amount, GetCurrency(), targetAccount.GetCurrency());
 
+                    // Deposit the converted amount into the target account without writing to the console or interest
                     targetAccount.Deposit(convertedAmount, false, false);
                     AnsiConsole.MarkupLine($"[green]{amount:F2} {GetCurrency()}[/] has been exchanged to [green]{convertedAmount:F2} {targetAccount.GetCurrency()}[/] and transferred to account:[blue] {accountNumber}[/]");
                     LogTransaction("Transfer", amount, "Transfer successful", accountNumber);
                     targetAccount.LogTransaction("Transfer In", convertedAmount, "Transfer received", accountNumber);
                     return true;
                 }
+                // No currency conversion needed
 
+                // Deposit the amount into the target account without writing to the console or interest
                 targetAccount.Deposit(amount, false, false);
                 LogTransaction("Transfer", amount, "Transfer successful", accountNumber);
                 AnsiConsole.MarkupLine($"[green]{amount:F2} {GetCurrency()}[/] has been transferred to account:[blue] {accountNumber}[/]");
                 targetAccount.LogTransaction("Transfer In", amount, "Transfer received", accountNumber);
                 return true;
             }
-            else
+            else // Withdrawal failed
             {
                 LogTransaction("Transfer Failed", amount, "Withdrawal failed", accountNumber);
                 AnsiConsole.MarkupLine("[red]Transfer failed.[/]");

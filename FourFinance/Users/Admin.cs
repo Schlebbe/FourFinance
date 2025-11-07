@@ -94,14 +94,14 @@ namespace FourFinance.Users
         public void UpdateExchangeRate()
         {
             Console.Clear();
-            // Present Currency enum values as selectable choices and return a Currency value
-            var currency = AnsiConsole.Prompt(
+            // Present Currency key values as selectable choices and return a currency key string
+            var currencyKey = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title("What [blue]currency[/] would you like to update?")
                     .PageSize(10)
                     .AddChoices(BankHelper.GetExchangeRateKeys()));
 
-            if (currency == "SEK")
+            if (currencyKey == "SEK")
             {
                 AnsiConsole.MarkupLine("[red]Cannot update the base currency SEK exchange rate.[/]");
                 AnsiConsole.MarkupLine("Press any key to continue");
@@ -110,7 +110,7 @@ namespace FourFinance.Users
                 return;
             }
 
-            decimal rate = AnsiConsole.Ask<decimal>($"Enter the new exchange rate for [blue]{currency}[/]:");
+            decimal rate = AnsiConsole.Ask<decimal>($"Enter the new exchange rate for [blue]{currencyKey}[/]:");
             if (rate <= 0)
             {
                 AnsiConsole.MarkupLine("[red]Invalid[/] [blue]exchange rate.[/] Please enter a positive number.");
@@ -120,8 +120,8 @@ namespace FourFinance.Users
                 return;
             }
 
-            BankHelper.UpdateExchangeRate(currency, rate);
-            AnsiConsole.MarkupLine($"Updated exchange rate for [blue]{currency}[/] to [green]{rate}[/].");
+            BankHelper.UpdateExchangeRate(currencyKey, rate);
+            AnsiConsole.MarkupLine($"Updated exchange rate for [blue]{currencyKey}[/] to [green]{rate}[/].");
             AnsiConsole.MarkupLine("Press any key to return to menu.");
             Console.ReadKey();
         }
