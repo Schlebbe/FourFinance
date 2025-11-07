@@ -7,10 +7,12 @@ namespace FourFinance
         public static readonly SemaphoreSlim ConsoleLock = new(1, 1);
         static async Task Main(string[] args)
         {
-            var taskScheduler = TransactionHelper.StartSchedulerAsync(TransactionHelper.cts.Token);
+            var transactionScheduler = SchedulerHelper.StartTransactionSchedulerAsync(SchedulerHelper.cts.Token);
+            var interestScheduler = SchedulerHelper.StartInterestSchedulerAsync(SchedulerHelper.cts.Token);
             DummyDataHelper.SeedDummyData(); // Seed some dummy users for testing
             LoginHelper.LoginPrompt();
-            await taskScheduler;
+            await transactionScheduler;
+            await interestScheduler;
         }
     }
 }

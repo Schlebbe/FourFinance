@@ -8,6 +8,7 @@ namespace FourFinance.Helpers
     {
         private static List<IUser> Users { get; set; } = new List<IUser>();
         private static int _lastAccountNumber = 53540000;
+        private static decimal _interestRate = 0.05m;
         private static Dictionary<string, decimal> ExchangeRates = new Dictionary<string, decimal>
         {
             { "SEK", 1.0m },
@@ -35,23 +36,24 @@ namespace FourFinance.Helpers
         {
             return Users.FirstOrDefault(u => u.Id == id);
         }
-        
-        public static List<Account>? GetAccounts(Guid userId)
+
+        public static List<Account>? GetAccounts(Guid userId, bool onlyChecking)
         {
             var user = Users.OfType<Customer>().FirstOrDefault(u => u.Id == userId);
 
-            if (user == null)
+            if (user == null || user.Accounts.Count == 0)
             {
-                //AnsiConsole.MarkupLine($"No user found with ID {userId}");
                 return null;
             }
 
-            if (user.Accounts.Count == 0)
+            if (onlyChecking)
             {
-                //AnsiConsole.MarkupLine($"{user.Name} has no accounts.");
-                return null;
+                return user.Accounts.Where(a => a.GetType() == typeof(Account)).ToList();
             }
-            return user.Accounts;
+            else
+            {
+                return user.Accounts.ToList();
+            }
         }
 
         public static int GenerateAccountNumber()
@@ -109,6 +111,24 @@ namespace FourFinance.Helpers
 
             var currentRate = GetExchangeRateByKey(currentRateKey);
             return amount / currentRate;
+        }
+
+        public static decimal GetInterestRate()
+        {
+            return _interestRate;
+        }
+
+        public static List<SavingsAccount> GetAllSavingsAccounts()
+        {
+            var savingsAccounts = new List<SavingsAccount>();
+            foreach (var user in Users)
+            {
+                var userAccounts = GetAccounts(user.Id, false);
+                if (userAccounts == null) continue;
+                savingsAccounts.AddRange(userAccounts.OfType<SavingsAccount>());
+            }
+
+            return savingsAccounts;
         }
     }
 }

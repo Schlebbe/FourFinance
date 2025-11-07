@@ -24,15 +24,23 @@ namespace FourFinance.Users
             Id = Guid.NewGuid();
         }
 
-        public void CreateAccount(string currency)
+        public void CreateAccount(string currency, bool isSavingsAccount)
         {
             var accountNumber = BankHelper.GenerateAccountNumber();
+
+            if (isSavingsAccount) { 
+                var newSavingsAccount = new SavingsAccount(accountNumber, currency);
+                Accounts.Add(newSavingsAccount);
+                AnsiConsole.MarkupLine($"Savings account created [green]successfully[/]. Account number: [blue]{accountNumber}[/]. Currency: [blue]{currency}[/].");
+                return;
+            }
+
             var newAccount = new Account(accountNumber, currency);
             Accounts.Add(newAccount);
-            AnsiConsole.MarkupLine($"Account created [green]successfully[/]. Account number: [blue]{accountNumber}[/]. Currency: [blue]{currency}[/].");
+            AnsiConsole.MarkupLine($"Checking account created [green]successfully[/]. Account number: [blue]{accountNumber}[/]. Currency: [blue]{currency}[/].");
         }
 
-        public decimal CustomerAssets() //TODO resolve currency conflict
+        public decimal CustomerAssets()
         {
             decimal assets = 0;
             foreach (var account in Accounts)

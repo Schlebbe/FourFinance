@@ -19,7 +19,7 @@ public class Loan
     public void CreateLoan(Customer customer)
     {
         AnsiConsole.Clear();
-        var accounts = BankHelper.GetAccounts(customer.Id);
+        var accounts = BankHelper.GetAccounts(customer.Id, true);
         var assets = customer.CustomerAssets();
 
         if (accounts == null || accounts.Count == 0)
@@ -80,7 +80,7 @@ public class Loan
             {
                 AnsiConsole.MarkupLine($"You selected [blue]account[/] with number: [blue]{selectedAccount.AccountNumber}[/]");
                 AnsiConsole.MarkupLine($"Previous balance: [green]{selectedAccount.GetBalance():F2} {selectedAccount.GetCurrency()}[/]\n");
-                selectedAccount.Deposit(principal);
+                selectedAccount.Deposit(principal, false, false);
                 selectedAccount.Loans.Add(this);
                 AnsiConsole.MarkupLine($"New balance: [green]{selectedAccount.GetBalance():F2} {selectedAccount.GetCurrency()}[/]\n");
                 CustomerHelper.Menu(customer);

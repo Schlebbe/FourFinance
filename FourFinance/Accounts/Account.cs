@@ -13,6 +13,13 @@ namespace FourFinance.Accounts
         public List<Loan> Loans { get; set; } = new List<Loan>();
         public List<TransactionLog> Logs { get; set; } = new List<TransactionLog>();
 
+        public Account(int accountNumber, string currency)
+        {
+            Id = Guid.NewGuid();
+            AccountNumber = accountNumber;
+            _currency = currency;
+        }
+
         private void LogTransaction(string type, decimal amount, string message = "", int? targetAccountNumber = null)
         {
             Logs.Add(new TransactionLog
@@ -26,12 +33,6 @@ namespace FourFinance.Accounts
                 BalanceAfter = _balance,
                 Message = message
             });
-        }
-        public Account(int accountNumber, string currency)
-        {
-            Id = Guid.NewGuid();
-            AccountNumber = accountNumber;
-            _currency = currency;
         }
 
         public bool Withdraw(decimal amount)
@@ -48,17 +49,23 @@ namespace FourFinance.Accounts
             return true;
         }
 
-        public bool Deposit(decimal amount)
+        public virtual bool Deposit(decimal amount, bool shouldLog, bool isInterest)
         {
+            var logType = isInterest ? "Interest" : "Deposit";
+            var logMessage = isInterest ? "Interest applied" : "Deposit successful";
+
             if (amount <= 0)
             {
-                AnsiConsole.MarkupLine("[red]Deposit amount must be positive.[/]");
+                if (shouldLog)
+                {
+                    AnsiConsole.MarkupLine("[red]Deposit amount must be positive.[/]");
+                }
                 LogTransaction("Deposit Failed", amount, "Invalid deposit amount");
                 return false;
             }
 
             _balance += amount;
-            LogTransaction("Deposit", amount, "Deposit successful");
+            LogTransaction(logType, amount, logMessage);
             return true;
         }
 
@@ -87,14 +94,14 @@ namespace FourFinance.Accounts
                 {
                     var convertedAmount = BankHelper.CalculateExchange(amount, GetCurrency(), targetAccount.GetCurrency());
 
-                    targetAccount.Deposit(convertedAmount);
+                    targetAccount.Deposit(convertedAmount, false, false);
                     AnsiConsole.MarkupLine($"[green]{amount:F2} {GetCurrency()}[/] has been exchanged to [green]{convertedAmount:F2} {targetAccount.GetCurrency()}[/] and transferred to account:[blue] {accountNumber}[/]");
                     LogTransaction("Transfer", amount, "Transfer successful", accountNumber);
                     targetAccount.LogTransaction("Transfer In", convertedAmount, "Transfer received", accountNumber);
                     return true;
                 }
 
-                targetAccount.Deposit(amount);
+                targetAccount.Deposit(amount, false, false);
                 LogTransaction("Transfer", amount, "Transfer successful", accountNumber);
                 AnsiConsole.MarkupLine($"[green]{amount:F2} {GetCurrency()}[/] has been transferred to account:[blue] {accountNumber}[/]");
                 targetAccount.LogTransaction("Transfer In", amount, "Transfer received", accountNumber);
@@ -106,8 +113,6 @@ namespace FourFinance.Accounts
                 AnsiConsole.MarkupLine("[red]Transfer failed.[/]");
                 return false;
             }
-
-            //TODO: Log transaction?
         }
 
         public decimal GetBalance()
@@ -134,8 +139,8 @@ namespace FourFinance.Accounts
         {
             foreach (var log in Logs)
             {
-                AnsiConsole.MarkupLine($"[grey]{log.Timestamp:G}[/] - [cyan]{log.Type}[/] - [green]{log.Amount} {log.Currency}[/] - " +
-                                       $"Balance: [blue]{log.BalanceAfter}[/] - [white]{log.Message}[/]");
+                AnsiConsole.MarkupLine($"[grey]{log.Timestamp:G}[/] - [cyan]{log.Type}[/] - [green]{log.Amount:F2} {log.Currency}[/] - " +
+                                       $"Balance: [blue]{log.BalanceAfter:F2}[/] - [white]{log.Message}[/]");
             }
             AnsiConsole.WriteLine("\nPress any key to continue...");
             Console.ReadKey();
