@@ -13,9 +13,6 @@ namespace FourFinance
 
             LoginHelper.LoginPrompt();
 
-            // When the application is closing, cancel the schedulers
-            SchedulerHelper.cts.Cancel(false); // Stop the schedulers when the application is closing
-
             // Wait for the schedulers to complete any remaining tasks
             await transactionScheduler;
             await interestScheduler;
