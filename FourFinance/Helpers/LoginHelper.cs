@@ -45,16 +45,16 @@ namespace FourFinance.Helpers
 
                 var user = BankHelper.GetUserByLogin(username, password);
 
+                AnsiConsole.Clear();
+                // Check user type and redirect accordingly
                 if (user != null && user.GetType() == typeof(Admin))
                 {
-                    AnsiConsole.Clear();
                     AnsiConsole.MarkupLine($"Welcome back, Admin [blue]{user.Name}[/]!");
                     AdminHelper.Menu((Admin)user);
                     return;
                 }
                 else if (user != null && user.GetType() == typeof(Customer))
                 {
-                    AnsiConsole.Clear();
                     AnsiConsole.MarkupLine($"Welcome back, [blue]{user.Name}[/]!");
                     CustomerHelper.Menu((Customer)user);
                     return;
@@ -69,6 +69,11 @@ namespace FourFinance.Helpers
                 if (remaining > 0)
                 {
                     AnsiConsole.MarkupLine("[yellow]Please try again[/]");
+                }
+                else if (remaining == 0)
+                {
+                    AnsiConsole.Clear();
+                    AnsiConsole.MarkupLine("[red]Maximum login attempts exceeded. Exiting...[/]");
                 }
             }
         }

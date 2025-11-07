@@ -60,18 +60,18 @@ namespace FourFinance.Helpers
             var exitAccount = new Account(000, "NaN");
             var choices = accounts.Concat(new[] { exitAccount }).ToList();
 
-            await Program.ConsoleLock.WaitAsync();
+            await Program.ConsoleLock.WaitAsync(); // Ensure exclusive access to the console
             try
             {
+                // Selection prompt for accounts including an exit option
                 selectedAccount = AnsiConsole.Prompt(
                     new SelectionPrompt<Account>()
                         .PageSize(5)
-                        .UseConverter(a =>
-                            a.AccountNumber == 000
+                        .UseConverter(a => // Converter to display account details
+                            a.AccountNumber == 000 // Check if the selected account is the dummy account exit option
                                 ? "[red]Exit[/]"
                                 : $"{(a.GetType() == typeof(Account) ? "Checking" : "Savings")} account: {a.AccountNumber}\n  Balance: {a.GetBalance():F2} {a.GetCurrency()}\n")
-                        .AddChoices(choices)
-                );
+                        .AddChoices(choices));
 
                 if (selectedAccount.AccountNumber == 000)
                 {
@@ -82,7 +82,7 @@ namespace FourFinance.Helpers
             }
             finally
             {
-                Program.ConsoleLock.Release();
+                Program.ConsoleLock.Release(); // Release the console lock
             }
 
             if (selectedAccount != null)
@@ -137,13 +137,29 @@ namespace FourFinance.Helpers
 
             if (amount <= 0)
             {
-                AnsiConsole.MarkupLine("[red]Amount must be greater than zero. [/]");
+                AnsiConsole.MarkupLine("[red]Amount must be greater than zero.[/]");
                 ListAccounts(customer);
+                return;
             }
 
+            if (targetAccountNumber <= 0)
+            {
+                AnsiConsole.MarkupLine("[red]Invalid account number.[/]");
+                ListAccounts(customer);
+                return;
+            }
+
+            if (targetAccountNumber == selectedAccount.AccountNumber)
+            {
+                AnsiConsole.MarkupLine("[red]You cannot transfer to the same account.[/]");
+                ListAccounts(customer);
+                return;
+            }
+
+            // Enqueue the transfer operation to be processed by the scheduler using lambda expression
             SchedulerHelper.pendingTransactions.Enqueue(() =>
             {
-                var result = selectedAccount.Transfer(amount, targetAccountNumber, customer);
+                var result = selectedAccount.Transfer(amount, targetAccountNumber);
 
                 if (result == true)
                 {
@@ -162,7 +178,7 @@ namespace FourFinance.Helpers
                 AnsiConsole.MarkupLine("[red]Amount must be greater than zero. [/]");
                 return;
             }
-            var result = selectedAccount.Deposit(amount, true, false);
+            var result = selectedAccount.Deposit(amount, true, false); // Deposit to selected account with printing enabled and interest disabled
 
             if (result == true)
             {
@@ -191,7 +207,7 @@ namespace FourFinance.Helpers
         {
             AnsiConsole.MarkupLine("To create a new [green]checking account[/], [yellow]please[/] provide the following details:");
 
-            // Present Currency enum values as selectable choices and return a Currency value
+            // Present Currency key values as selectable choices and return a Currency key string
             var currency = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title("What [blue]currency[/] would you like to use?")
@@ -199,7 +215,7 @@ namespace FourFinance.Helpers
                     .AddChoices(BankHelper.GetExchangeRateKeys()));
 
             AnsiConsole.Clear();
-            customer.CreateAccount(currency, false);
+            customer.CreateAccount(currency, false); // Create checking account
 
             // Return the flow to the start of the customer menu
             Menu(customer);
@@ -209,7 +225,7 @@ namespace FourFinance.Helpers
         {
             AnsiConsole.MarkupLine("To create a new [green]savings account[/], [yellow]please[/] provide the following details:");
 
-            // Present Currency enum values as selectable choices and return a Currency value
+            // Present Currency key values as selectable choices and return a Currency key string
             var currency = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title("What [blue]currency[/] would you like to use?")
@@ -217,7 +233,7 @@ namespace FourFinance.Helpers
                     .AddChoices(BankHelper.GetExchangeRateKeys()));
 
             AnsiConsole.Clear();
-            customer.CreateAccount(currency, true);
+            customer.CreateAccount(currency, true); // Create savings account
 
             // Return the flow to the start of the customer menu
             Menu(customer);

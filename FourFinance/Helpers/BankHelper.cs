@@ -24,22 +24,25 @@ namespace FourFinance.Helpers
             Users.Add(user);
         }
 
-        public static void GetUsers()
+        public static void PrintUsers()
         {
-            foreach (var user in Users)
+            foreach (var user in Users.OfType<Customer>())
             {
-                AnsiConsole.MarkupLine($"Name: {user.Name}, Email: {user.Email}, UserName: {user.UserName}, Age: {user.Age} IsAdmin: {user.GetType() == typeof(Admin)}");
+                AnsiConsole.MarkupLine($"Name: [aquamarine1]{user.Name}[/], Email: [yellow]{user.Email}[/], UserName: [hotpink]{user.UserName}[/], Age: [salmon1]{user.Age}[/]");
             }
+
+            AnsiConsole.MarkupLine("Press any key to continue");
+            Console.ReadKey();
         }
 
         public static IUser? GetUserById(Guid id)
         {
-            return Users.FirstOrDefault(u => u.Id == id);
+            return Users.SingleOrDefault(u => u.Id == id);
         }
 
         public static List<Account>? GetAccounts(Guid userId, bool onlyChecking)
         {
-            var user = Users.OfType<Customer>().FirstOrDefault(u => u.Id == userId);
+            var user = Users.OfType<Customer>().SingleOrDefault(u => u.Id == userId);
 
             if (user == null || user.Accounts.Count == 0)
             {
@@ -71,7 +74,7 @@ namespace FourFinance.Helpers
         {
             foreach (var user in Users.OfType<Customer>())
             {
-                var account = user.Accounts.FirstOrDefault(a => a.AccountNumber == accountNumber);
+                var account = user.Accounts.SingleOrDefault(a => a.AccountNumber == accountNumber);
                 if (account != null)
                     return account;
             }
@@ -96,10 +99,10 @@ namespace FourFinance.Helpers
 
         public static decimal CalculateExchange(decimal amount, string currentRateKey, string targetRateKey)
         {
-            var targetRate = GetExchangeRateByKey(targetRateKey);
-            var amountInBaseRate = ConvertAmountToBaseRate(amount, currentRateKey);
+            var targetRate = GetExchangeRateByKey(targetRateKey); // Get target exchange rate
+            var amountInBaseRate = ConvertAmountToBaseRate(amount, currentRateKey); // Convert amount to base rate (SEK)
 
-            return amountInBaseRate * targetRate;
+            return amountInBaseRate * targetRate; // Convert from base rate to target currency
         }
 
         private static decimal ConvertAmountToBaseRate(decimal amount, string currentRateKey)
@@ -125,7 +128,7 @@ namespace FourFinance.Helpers
             {
                 var userAccounts = GetAccounts(user.Id, false);
                 if (userAccounts == null) continue;
-                savingsAccounts.AddRange(userAccounts.OfType<SavingsAccount>());
+                savingsAccounts.AddRange(userAccounts.OfType<SavingsAccount>()); // Fill SavingsAccount list from users accounts
             }
 
             return savingsAccounts;

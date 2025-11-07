@@ -19,7 +19,7 @@ public class Loan
     public void CreateLoan(Customer customer)
     {
         AnsiConsole.Clear();
-        var accounts = BankHelper.GetAccounts(customer.Id, true);
+        var accounts = BankHelper.GetAccounts(customer.Id, onlyChecking: true);
         var assets = customer.CustomerAssets();
 
         if (accounts == null || accounts.Count == 0)
@@ -42,6 +42,7 @@ public class Loan
             return;
         }
 
+        // Using Spectre.Console to create a selection prompt for accounts
         var selectedAccount = AnsiConsole.Prompt(
             new SelectionPrompt<Account>()
                 .PageSize(5)
@@ -49,20 +50,13 @@ public class Loan
                     $"Account number: {a.AccountNumber}\n  Balance: {a.GetBalance():F2} {a.GetCurrency()}\n")
                 .AddChoices(accounts));
 
-        var remainingLoanAmount = (assets * 5) - selectedAccount.GetActiveLoanAmount();
+        var remainingLoanAmount = maxLoanAmount - selectedAccount.GetActiveLoanAmount();
 
         AnsiConsole.Clear();
-        AnsiConsole.Markup($"Desired [green]amount[/]: ");
-        bool success = decimal.TryParse(Console.ReadLine(), out decimal principal);
-        Principal = principal;
-
-        if (success != true)
-        {
-            AnsiConsole.MarkupLine("[red]Incorrect input, please try again by pressing any button..[/]");
-            Console.ReadKey();
-            CreateLoan(customer);
-            return;
-        }
+        Principal = AnsiConsole.Prompt(
+            new TextPrompt<decimal>("Desired [green]amount[/]: ")
+                .ValidationErrorMessage("[red]Incorrect input, please try again by pressing any button..[/]")
+        );
 
         if (remainingLoanAmount < Principal)
         {
@@ -72,16 +66,19 @@ public class Loan
             return;
         }
 
-        if (principal <= maxLoanAmount && principal > 0)
+        // Validate loan amount
+        if (Principal <= maxLoanAmount && Principal > 0)
         {
-            AnsiConsole.MarkupLine($"[green]{principal:F2} {selectedAccount.GetCurrency()}[/] with an [salmon1]interest[/] of [salmon1]{(int)(InterestRate * 100m)}%[/] will be [green]{principal * (1 + InterestRate)} {selectedAccount.GetCurrency()}[/]");
-
+            AnsiConsole.Clear();
+            AnsiConsole.MarkupLine($"[green]{Principal:F2} {selectedAccount.GetCurrency()}[/] with an [salmon1]interest[/] of [salmon1]{(int)(InterestRate * 100m)}%[/] will be [green]{Principal * (1 + InterestRate)} {selectedAccount.GetCurrency()}[/]");
+            
             if (selectedAccount != null)
             {
+                // Deposit the loan amount into the selected account
                 AnsiConsole.MarkupLine($"You selected [blue]account[/] with number: [blue]{selectedAccount.AccountNumber}[/]");
                 AnsiConsole.MarkupLine($"Previous balance: [green]{selectedAccount.GetBalance():F2} {selectedAccount.GetCurrency()}[/]\n");
-                selectedAccount.Deposit(principal, false, false);
-                selectedAccount.Loans.Add(this);
+                selectedAccount.Deposit(Principal, false, false);
+                selectedAccount.Loans.Add(this); // Add the loan to the account's loan list
                 AnsiConsole.MarkupLine($"New balance: [green]{selectedAccount.GetBalance():F2} {selectedAccount.GetCurrency()}[/]\n");
                 CustomerHelper.Menu(customer);
             }
