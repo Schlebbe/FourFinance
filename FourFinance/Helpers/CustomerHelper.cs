@@ -114,6 +114,8 @@ namespace FourFinance.Helpers
                         break;
                     case "Transfer":
                         HandleTransfer(customer, selectedAccount);
+                        AnsiConsole.MarkupLine("Press any key to continue");
+                        Console.ReadKey();
                         ListAccounts(customer);
                         break;
                     case "History":
@@ -130,7 +132,7 @@ namespace FourFinance.Helpers
             return;
         }
 
-        private static async Task HandleTransfer(Customer customer, Account selectedAccount)
+        private static void HandleTransfer(Customer customer, Account selectedAccount)
         {
             decimal amount = AnsiConsole.Ask<decimal>("Enter amount to transfer: ");
             int targetAccountNumber = AnsiConsole.Ask<int>("Enter account number: ");
@@ -138,21 +140,30 @@ namespace FourFinance.Helpers
             if (amount <= 0)
             {
                 AnsiConsole.MarkupLine("[red]Amount must be greater than zero.[/]");
-                ListAccounts(customer);
                 return;
             }
 
             if (targetAccountNumber <= 0)
             {
                 AnsiConsole.MarkupLine("[red]Invalid account number.[/]");
-                ListAccounts(customer);
                 return;
             }
 
             if (targetAccountNumber == selectedAccount.AccountNumber)
             {
                 AnsiConsole.MarkupLine("[red]You cannot transfer to the same account.[/]");
-                ListAccounts(customer);
+                return;
+            }
+
+            if (amount > selectedAccount.GetBalance())
+            {
+                AnsiConsole.MarkupLine("[red]Insufficient funds.[/]");
+                return;
+            }
+
+            if (BankHelper.GetAccountByNumber(targetAccountNumber) == null)
+            {
+                AnsiConsole.MarkupLine("[red]Could not find an account with the given account number.[/]");
                 return;
             }
 
@@ -167,6 +178,8 @@ namespace FourFinance.Helpers
                 }
                 return Task.CompletedTask;
             });
+
+            AnsiConsole.MarkupLine("[green]Transfer request submitted successfully and will be processed shortly.[/]");
         }
 
         private static void HandleDeposit(Account selectedAccount)

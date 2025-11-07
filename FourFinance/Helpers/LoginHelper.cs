@@ -74,6 +74,7 @@ namespace FourFinance.Helpers
                 {
                     AnsiConsole.Clear();
                     AnsiConsole.MarkupLine("[red]Maximum login attempts exceeded. Exiting...[/]");
+                    Environment.Exit(0);
                 }
             }
         }
